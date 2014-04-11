@@ -1,0 +1,6 @@
+*.txt
+.DS_Store
+
+.*.sw*
+
+arduino/IoT/libraries
