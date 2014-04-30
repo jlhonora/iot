@@ -35,7 +35,7 @@ void measurements_initialize() {
   // interrupt and count sensor to INT1.
   // Execute pir_count whenever this interrupt
   // occurs
-  attachInterrupt(INT1, do_pir_count , RISING);
+  attachInterrupt(INT1, attempt_pir_count, RISING);
   #endif
 }
 

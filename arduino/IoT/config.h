@@ -1,21 +1,24 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define NODEID 1
-#define NETWORKID 50
+#define NODEID 1035
+#define NETWORKID 100
 
-// Board type
+//Opcion de Placa
+
+//#define JEENODE
 #define BEENODE
 
-// Board function
-#define MASTER
+//Opcion de funcionalidad
+
+// #define MASTER
 //#define MASTER_SENSING
 // If defined, the node does not send
 // ACKs to the network
 // #define LISTEN_ONLY
 // #define RELAY
 // #define RELAY_SENSING
-//#define ENDNODE
+#define ENDNODE
 
 //Define to get datalogging behaviour
 //#define DATALOGGING
@@ -23,7 +26,7 @@
 ////////////////
 //Constantes
 //Unidades de 1 ms (15000 milisegundos)
-#define SLEEP_TIME 120000LLU
+#define SLEEP_TIME 12000LLU
 #define SLEEP_TIME_S (SLEEP_TIME/1000)
 #define ACTION_TIME 1000LLU
 #define ACTION_TIME_S (ACTION_TIME/1000)
@@ -36,10 +39,10 @@
 // other interrupt-and-count peripheral
 // It is included in the analog values, so in the API
 // it should be defined in port 7 (port 4 analog)
-#define PIR_PORT 0
+#define PIR_PORT 1
 
 //DS18B20
-#define DS18B20_PORT 1
+#define DS18B20_PORT 0
 #define DS18B20_PIN 4
 
 // When MINIMUM_POWER is defined,
@@ -48,7 +51,7 @@
 // #define MINIMUM_POWER
 
 //Action features
-#define ACTION
+//#define ACTION
 #if defined(ACTION)
   #if defined(MASTER)
     #define ACTION_MASTER

@@ -125,7 +125,7 @@ void app_receive(uint8_t *data, uint8_t data_length) {
 
 void setup()
 {
-  low_power_init();
+  //low_power_init();
   Serial.begin(57600);
 
   debug("Boot");
@@ -155,21 +155,11 @@ void setup()
 // The millis() function returns an unsigned long, which
 // corresponds to a uint32_t type
 uint32_t last_measurement_time = 0;
-#if defined(ACTION_NODE)
-uint32_t last_action_time = 0;
-#endif
 uint32_t elapsed = 0;
 #endif
 
 void loop()
 {
-  #if defined(ACTION_NODE)
-  if((elapsed = (millis() - last_action_time)) > ACTION_TIME){
-    process_actions(elapsed);
-    last_action_time = millis();
-  }
-  #endif
-
   #if defined(SENSING)
   #if defined(RADIO_ALWAYS_ON)
   if((elapsed = (millis() - last_measurement_time)) > SLEEP_TIME){
@@ -184,27 +174,12 @@ void loop()
 
   uint8_t i, packet_type = DATA_PACKET;
 
-  #ifdef DATALOGGING
-  //If there are samples saved, we aggregate the current values to the last ones to send
-  if (average_samples > 0){
-    average_samples++;
-    for(i = 0; i < 9; i++){
-      average_values[i] += values[i];
-      values[i] = (uint16_t)((double)average_values[i] / (double)average_samples);
-    }
-    //the last element is the number of samples
-    values[i++] = average_samples;
-    values[i] = SLEEP_TIME_S;
-    packet_type = LOGGER_PACKET;
-  }
-  #endif
-
   bool sent = network_send((uint8_t *)values, sizeof(values), packet_type);
   #if defined(MINIMUM_POWER)
   sent = true;
   #endif
   #if PIR_PORT > 0
-  if(sent) reset_pir_count();
+  if (sent) reset_pir_count();
   #endif
   #endif // else defined(MASTER_SENSING)
   
@@ -222,10 +197,6 @@ void loop()
 
   // Decide how much time should I sleep
   #if defined(ENDNODE)
-    // If I'm an action node, only sleep ACTION_TIME
-    #if defined(ACTION_NODE)
-    sleep_mseconds(ACTION_TIME);
-    #else
     // If I don't use the serial port, disable it
     // while sleeping (and then enable it)
     #if !defined(USE_SERIAL_PORT_INPUT)
@@ -236,53 +207,6 @@ void loop()
     #if !defined(USE_SERIAL_PORT_INPUT)
     power_usart0_enable();
     #endif
-    #endif
   #endif 
 }
-
-// The incoming serial data is only processed
-// in the following cases:
-// 1. The node is acting as a serial gateway or 
-//    has a serial input sensor 
-// 2. The node is a master node and must send 
-//    actions to the network
-#if defined(USE_SERIAL_PORT_INPUT)
-void serialEvent(void) {
-  if(serial_rx_state == SERIAL_AVAILABLE) {
-    debug("wait");
-    return;
-  }
-  
-  led_activity(true);
-  usart_process_rx();
-  led_activity(false);
-}
-
-void usart_process_rx(void) {
-  #if defined(ACTION_MASTER)
-  action_usart_process_rx();
-  return;
-  #else
-  while(Serial.available()) {
-    rx_byte = (char) Serial.read();
-    // If there's a packet available we won't process any
-    // more data
-    if(serial_rx_state == SERIAL_AVAILABLE) {
-      return;
-    }
-    // If there's more characters than memory
-    // then we reset the buffer
-    if(rx_count >= URX_BUFFER_SIZE - 1) {
-      rx_count = 0;
-      return;
-    }
-    if((serial_rx_state == SERIAL_IDLE) &&
-       (rx_byte == STARTING_BYTE)) {
-      rx_count = 0;
-      serial_rx_state = SERIAL_RECEIVING;
-    }
-  }
-  #endif //defined(ACTION_MASTER)
-}
-#endif
 
