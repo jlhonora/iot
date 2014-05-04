@@ -29,6 +29,12 @@ def get_serial_port(name = ''):
 					  timeout      = 5)
 	return s
 
+def safe_open(serial_port):
+	if serial_port is None:
+		return
+	if not serial_port.isOpen():
+		serial_port.open()
+
 def post_data(data):
 	json_data = {
 		'payload': data,
@@ -38,17 +44,17 @@ def post_data(data):
 	req = urllib2.Request('http://127.0.0.1:8081')
 	req.add_header('Content-Type', 'application/json')
 
-	response = urllib2.urlopen(req, json.dumps(data))
+	response = urllib2.urlopen(req, json.dumps(json_data))
 
 def run(serial_port = None):
 	if serial_port == None:
 		serial_port = get_serial_port()
 	safe_open(serial_port)
 	while True:
-		post_data(serial_port.readline())
+		# post_data(serial_port.readline())
 		# uncomment for testing
-		#time.sleep(1)
-		#post_data("test")
+		time.sleep(1)
+		post_data("test")
 
 print "Starting serial port parser"
 run()
