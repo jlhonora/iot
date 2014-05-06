@@ -47,9 +47,9 @@ def post_data(data):
 	response = urllib2.urlopen(req, json.dumps(json_data))
 
 def run(serial_port = None):
-	if serial_port == None:
-		serial_port = get_serial_port()
-	safe_open(serial_port)
+	#if serial_port == None:
+	#	serial_port = get_serial_port()
+	#safe_open(serial_port)
 	while True:
 		# post_data(serial_port.readline())
 		# uncomment for testing
