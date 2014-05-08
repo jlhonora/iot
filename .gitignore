@@ -6,3 +6,5 @@
 arduino/IoT/libraries
 
 *.pyc
+
+*.rdb
