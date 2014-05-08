@@ -3,6 +3,7 @@
 import json
 import os
 import serial
+import random
 import urllib2
 import time
 from time import gmtime, strftime
@@ -46,6 +47,9 @@ def post_data(data):
 
 	response = urllib2.urlopen(req, json.dumps(json_data))
 
+def post_test_data():
+	post_data(str("%d,1,2,3,4,5" % random.randint(1, 20)))
+
 def run(serial_port = None):
 	#if serial_port == None:
 	#	serial_port = get_serial_port()
@@ -54,10 +58,10 @@ def run(serial_port = None):
 		# post_data(serial_port.readline())
 		# uncomment for testing
 		time.sleep(1)
-		post_data("test")
+		post_test_data()
 
-print "Starting serial port parser"
-run()
-serial_port.close()
-
-print "Exiting"
+if __name__ == "__main__":
+	print "Starting serial port parser"
+	run()
+	serial_port.close()
+	print "Exiting"
