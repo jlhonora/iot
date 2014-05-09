@@ -5,7 +5,7 @@ redis-server          &
 
 # The worker that reads from the redis queue and processes
 # the enqueued objects
-rqworker              &
+python worker.py              &
 
 # Receives HTTP requests for data and fills the queue
 python api_manager.py &

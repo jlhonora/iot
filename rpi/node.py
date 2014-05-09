@@ -38,34 +38,36 @@ class Node:
 
 	@staticmethod
 	def get_by_id_or_create(cursor, node_id):
-		node = get_by_id(cursor, node_id)
+		node = Node.get_by_id(cursor, node_id)
 		if node is None:
 			node = Node.init({'id': node_id})
-		return none
+		return node
 
 	@staticmethod
-	def create_new_measurements(json_data):
+	def create_new_measurements(dbconn, json_data):
 		if json_data is None:
 			return False
 		if isinstance(json_data, str):
 			json_data = json.loads(json_data)
 		if 'payload' in json_data:
-			return Node.process_payload(json_data['payload'])
+			return Node.process_payload(dbconn, json_data['payload'])
 			
 		return False
 	
 	@staticmethod
-	def process_payload(payload):
+	def process_payload(dbconn, payload):
 		slots = payload.split(',')	
 		node_id = slots[0]
 		measurements = slots[1:]
-		with psycopg2.connect("dbname=pgtest2db user=pgtest2user") as conn:
-			with conn.cursor() as curs:
-				node = Node.get_by_id(curs, node_id)
-				if node is None:
-					print "Node %s doesn't exist" % node_id
-					return False
-				else:
-					print "Got node %s: %s" % (node.id, node.name)
-					return True
+		# The connection will remain open after this
+		# The cursor is closed after this block
+		with dbconn.cursor() as curs:
+			node = Node.get_by_id_or_create(curs, node_id)
+			if node is None:
+				print "Node %s doesn't exist" % node_id
+				return False
+			else:
+				print "Got node %s: %s" % (node.id, node.name)
+				return True
 		return False
+

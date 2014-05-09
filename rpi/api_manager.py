@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 
 import json
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-from SimpleHTTPServer import SimpleHTTPRequestHandler
-
-from redis import Redis
-from rq import use_connection, Queue
-
-from worker import process_data
-
+import rq
+from worker import redis_conn, process_data
+from BaseHTTPServer		import HTTPServer, BaseHTTPRequestHandler
+from SimpleHTTPServer	import SimpleHTTPRequestHandler
+from redis				import Redis
 
 class SimpleHandler(BaseHTTPRequestHandler):
 
@@ -37,13 +34,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
 
 	def queue_data(self, json_data):
 		print "Queueing data"
-		Queue().enqueue(process_data, str(json_data))
+		rq.Queue(connection=redis_conn).enqueue(process_data, str(json_data))
 		print "Done queueing data"
 
 def run():
 	print "Running"
-	print "Setting up Redis"
-	use_connection()
+	# This is deprecated but I can't figure out
+	# how to do it the right way
 
 	HandlerClass = SimpleHandler
 	ServerClass  = HTTPServer
@@ -58,5 +55,5 @@ def run():
 	print "Serving HTTP on", sa[0], "port", sa[1], "..."
 	httpd.serve_forever()
 
-# TODO: Change to __init__
-run()
+if __name__ == "__main__":
+	run()
