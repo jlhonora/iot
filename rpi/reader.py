@@ -48,7 +48,7 @@ def post_data(data):
 	response = urllib2.urlopen(req, json.dumps(json_data))
 
 def post_test_data():
-	post_data(str("%d,1,2,3,4,5" % random.randint(1, 20)))
+	post_data(str("%d,1,2,255,255,255,255" % random.randint(1, 20)))
 
 def run(serial_port = None):
 	#if serial_port == None:
