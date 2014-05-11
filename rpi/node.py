@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import psycopg2
 import datetime
@@ -14,19 +15,16 @@ class Node:
 	created_at = None
 
 	def __init__(self):
-		created_at = str(datetime.datetime.now());
+		created_at = str(datetime.datetime.strftime("%Y-%m-%d %H:%M:%S", datetime.datetime.utcnow()))
 
 	def save(self, cursor):
-		if cursor is None:
-			return False
 		if self.id is not None:
-			existing = cursor
 			cursor.execute("UPDATE sensors SET name = (%s), updated_at=(%s) WHERE id = (%s)", (self.name, datetime.datetime.utcnow(), self.id))
 		else:
 			cursor.execute("INSERT INTO sensors(identifier, type, name, created_at, updated_at) VALUES (%s, 'default', %s, %s, %s)", (self.identifier, self.name, datetime.datetime.utcnow(), datetime.datetime.utcnow()))
 
 	def get_configs(self, dbconn):
-		return [{'0': int(1 << 8), '1': 1}, {'2': int(1 << 24), '3': int(1 << 16), '4': int(1 << 8), '5': 1}]
+		return [{'formula': {'0': int(1 << 8), '1': 1}}, {'formula': {'2': int(1 << 24), '3': int(1 << 16), '4': int(1 << 8), '5': 1}}]
 
 	def new_measurement(self, value, cursor, created_at = None):
 		if created_at is None:
@@ -34,7 +32,6 @@ class Node:
 		else:
 			created_at = datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
 		cursor.execute("INSERT INTO measurements(sensor_id, value, created_at) VALUES (%s, %s, %s)", (int(self.id), value, created_at))
-		
 
 	@staticmethod
 	def init(json_node):
@@ -103,6 +100,7 @@ class Node:
 				results = []
 				for config in configs:
 					values = []
+					formula = config['formula']
 					for key, value in config.iteritems():
 						if int(key) < len(measurements):
 							values = values + [int(measurements[int(key)]) * float(config[key])]
