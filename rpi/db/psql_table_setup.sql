@@ -16,23 +16,24 @@ CREATE TABLE nodes
 	created_at		timestamp
 );
 
+CREATE TYPE sensor_type AS ENUM ('default', 'counter', 'temperature', 'humidity');
+CREATE TABLE sensors
+(
+	id				SERIAL PRIMARY KEY,
+	stype			sensor_type, 
+	name            text,
+	reated_at		timestamp,
+	updated_at		timestamp
+);
+
 CREATE TABLE configurations
 (
 	id				SERIAL PRIMARY KEY,
+	name			text,
 	node_id			integer REFERENCES nodes (id),
 	sensor_id		integer REFERENCES sensors (id),
 	formula			text,
 	created_at		timestamp
-);
-
-CREATE TYPE sensor_type AS ENUM ('default', 'counter', 'temp', 'hum');
-CREATE TABLE sensors
-(
-	id				SERIAL PRIMARY KEY,
-	type			sensor_type, 
-	name            text,
-	created_at		timestamp,
-	updated_at		timestamp
 );
 
 CREATE TABLE measurements
