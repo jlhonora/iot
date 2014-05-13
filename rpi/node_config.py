@@ -5,6 +5,7 @@ import datetime
 
 class NodeConfig:
 	id = None
+	sensor_type = None
 	node_id = None
 	sensor_id = None
 	formula = None
@@ -12,12 +13,15 @@ class NodeConfig:
 
 	def __init__(self):
 		created_at = str(datetime.datetime.strftime("%Y-%m-%d %H:%M:%S", datetime.datetime.utcnow()))
+		sensor_type = 'default'
 
 	def save(self, cursor):
 		if self.id is not None:
-			cursor.execute("UPDATE node_configs SET node_id = (%s), sensor_id=(%s), formula=(%s) WHERE id = (%s)", (self.node_id, self.sensor_id, self.formula, datetime.datetime.utcnow(), self.id))
+			sql = "UPDATE node_configs SET node_id = (%s), sensor_id=(%s), formula=(%s) WHERE id = (%s)"
+			cursor.execute(sql, (self.node_id, self.sensor_id, self.formula, datetime.datetime.utcnow(), self.id))
 		else:
-			cursor.execute("INSERT INTO node_configs(node_id, sensor_id, formula, created_at) VALUES (%s, 'default', %s, %s, %s)", (self.node_id, self.sensor_id, self.formula, datetime.datetime.utcnow()))
+			sql = "INSERT INTO node_configs(node_id, stype, sensor_id, formula, created_at) VALUES (%s, %s, %s, %s, %s)"
+			cursor.execute(sql, (self.node_id, self.sensor_type, self.sensor_id, self.formula, datetime.datetime.utcnow()))
 
 	@staticmethod
 	def init(json_config):
@@ -28,6 +32,8 @@ class NodeConfig:
 
 		if 'id' in json_config:
 			new_config.id = json_config['id']
+		if 'sensor_type' in json_config:
+			new_config.sensor_type = json_config['sensor_type']
 		if 'node_id' in json_config:
 			new_config.node_id = json_config['node_id']
 		if 'sensor_id' in json_config:
@@ -44,3 +50,4 @@ class NodeConfig:
 		configs = []
 		for r in result:
 			configs = configs + [NodeConfig.init(r)]
+		return configs

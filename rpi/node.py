@@ -19,9 +19,11 @@ class Node:
 
 	def save(self, cursor):
 		if self.id is not None:
-			cursor.execute("UPDATE sensors SET name = (%s), updated_at=(%s) WHERE id = (%s)", (self.name, datetime.datetime.utcnow(), self.id))
+			sql = "UPDATE sensors SET name = (%s), updated_at=(%s) WHERE id = (%s)"
+			cursor.execute(sql, (self.name, datetime.datetime.utcnow(), self.id))
 		else:
-			cursor.execute("INSERT INTO sensors(identifier, type, name, created_at, updated_at) VALUES (%s, 'default', %s, %s, %s)", (self.identifier, self.name, datetime.datetime.utcnow(), datetime.datetime.utcnow()))
+			sql = "INSERT INTO sensors(identifier, stype, name, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)"
+			cursor.execute(sql, (self.identifier, 'default', self.name, datetime.datetime.utcnow(), datetime.datetime.utcnow()))
 
 	def get_configs(self, dbconn):
 		return [{'formula': {'0': int(1 << 8), '1': 1}}, {'formula': {'2': int(1 << 24), '3': int(1 << 16), '4': int(1 << 8), '5': 1}}]
@@ -31,7 +33,8 @@ class Node:
 			created_at = datetime.datetime.utcnow()
 		else:
 			created_at = datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
-		cursor.execute("INSERT INTO measurements(sensor_id, value, created_at) VALUES (%s, %s, %s)", (int(self.id), value, created_at))
+		sql = "INSERT INTO measurements(sensor_id, value, created_at) VALUES (%s, %s, %s)"
+		cursor.execute(sql, (int(self.id), value, created_at))
 
 	@staticmethod
 	def init(json_node):
