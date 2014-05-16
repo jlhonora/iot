@@ -45,7 +45,7 @@ class NodeConfig:
 		return new_config
 
 	@staticmethod
-	def get_by_node_id(node_id, cursor):
+	def get_configs_by_node_id(node_id, cursor):
 		result = cursor.execute("SELECT * FROM node_configs WHERE node_id = (%s)", (node_id,))
 		configs = []
 		for r in result:
