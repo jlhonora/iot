@@ -13,17 +13,19 @@ class Node:
 	identifier = None
 	name = None
 	created_at = None
+	updated_at = None
 
 	def __init__(self):
-		created_at = datetime.datetime.utcnow()
+		self.created_at = datetime.datetime.utcnow()
+		self.updated_at = self.created_at
 
 	def save(self, cursor):
 		if self.id is not None:
-			sql = "UPDATE sensors SET name = (%s), updated_at=(%s) WHERE id = (%s)"
+			sql = "UPDATE nodes SET name = (%s), updated_at=(%s) WHERE id = (%s)"
 			cursor.execute(sql, (self.name, datetime.datetime.utcnow(), self.id))
 		else:
-			sql = "INSERT INTO sensors(identifier, stype, name, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)"
-			cursor.execute(sql, (self.identifier, 'default', self.name, datetime.datetime.utcnow(), datetime.datetime.utcnow()))
+			sql = "INSERT INTO nodes(identifier, name, created_at, updated_at) VALUES (%s, %s, %s, %s)"
+			cursor.execute(sql, (self.identifier, self.name, datetime.datetime.utcnow(), datetime.datetime.utcnow()))
 
 	def get_configs(self, cursor):
 		return NodeConfig.get_configs_by_node_id(self.id, cursor)

@@ -3,6 +3,8 @@
 import psycopg2
 import datetime
 import node
+import sensor
+import node_config as config
 import json
 
 def insert_node(cursor):
@@ -24,23 +26,23 @@ def insert_sensor(cursor):
 	sql = "INSERT INTO sensors(stype, name, created_at, updated_at) VALUES (%s, %s, %s, %s) RETURNING *"
 	cursor.execute(sql, (sensor_type, name, datetime.datetime.utcnow(), datetime.datetime.utcnow()))
 	sensor_id = cursor.fetchone()[0]
-	sensor = Sensor.get_by_id(sensor_id)
-	assert sensor.id == sensor_id
-	assert sensor.sensor_type == sensor_type
-	assert sensor.name == name
+	sensor_obj = sensor.Sensor.get_by_id(cursor, sensor_id)
+	assert sensor_obj.id == sensor_id
+	assert sensor_obj.sensor_type == sensor_type
+	assert sensor_obj.name == name
 	print "Sensor pass"
 	return sensor_id
 
 def insert_config(cursor, node_id, sensor_id):
 	configs = [{'name': 'Battery', 'formula': {'0': int(1 << 8), '1': 1}}, {'name': 'Counter 32 bit', 'formula': {'2': int(1 << 24), '3': int(1 << 16), '4': int(1 << 8), '5': 1}}]
 	sql = "INSERT INTO configurations(name, node_id, sensor_id, formula, created_at) VALUES (%s, %s, %s, %s, %s) RETURNING *"
-	for config in configs:
-		cursor.execute(sql, (config['name'], node_id, sensor_id, config['formula'], datetime.datetime.utcnow()))
+	for elem in configs:
+		cursor.execute(sql, (elem['name'], node_id, sensor_id, str(elem['formula']), datetime.datetime.utcnow()))
 		config_id = cursor.fetchone()[0]
-		config = Config.get_by_id(config_id)
-		assert config.id == config_id
-		assert config.name == config['name']
-		assert config.formula == json.dumps(config['formula'])
+		config_obj = config.NodeConfig.get_by_id(cursor, config_id)
+		assert config_obj.id == config_id
+		assert config_obj.name == elem['name']
+		assert str(config_obj.formula) == str(elem['formula'])
 	print "Config pass"
 
 if __name__ == "__main__":
@@ -51,6 +53,5 @@ if __name__ == "__main__":
 			node_id = insert_node(cursor)
 			sensor_id = insert_sensor(cursor)
 			insert_config(cursor, node_id, sensor_id)
-		conn.close()
 	print "Done"
 
