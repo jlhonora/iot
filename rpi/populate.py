@@ -37,12 +37,12 @@ def insert_config(cursor, node_id, sensor_id):
 	configs = [{'name': 'Battery', 'formula': {'0': int(1 << 8), '1': 1}}, {'name': 'Counter 32 bit', 'formula': {'2': int(1 << 24), '3': int(1 << 16), '4': int(1 << 8), '5': 1}}]
 	sql = "INSERT INTO configurations(name, node_id, sensor_id, formula, created_at) VALUES (%s, %s, %s, %s, %s) RETURNING *"
 	for elem in configs:
-		cursor.execute(sql, (elem['name'], node_id, sensor_id, str(elem['formula']), datetime.datetime.utcnow()))
+		cursor.execute(sql, (elem['name'], node_id, sensor_id, json.dumps(elem['formula']), datetime.datetime.utcnow()))
 		config_id = cursor.fetchone()[0]
 		config_obj = config.NodeConfig.get_by_id(cursor, config_id)
 		assert config_obj.id == config_id
 		assert config_obj.name == elem['name']
-		assert str(config_obj.formula) == str(elem['formula'])
+		assert json.dumps(config_obj.formula) == json.dumps(elem['formula'])
 	print "Config pass"
 
 if __name__ == "__main__":

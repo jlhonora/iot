@@ -31,7 +31,7 @@ class Sensor:
 	def get_configs(self, cursor):
 		return SensorConfig.get_configs_by_sensor_id(self.id, cursor)
 
-	def new_measurement(self, value, cursor, created_at = None):
+	def new_measurement(self, cursor, value, created_at = None):
 		if created_at is None:
 			created_at = datetime.datetime.utcnow()
 		else:

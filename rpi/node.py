@@ -7,6 +7,8 @@ import json
 import time
 import string
 import random
+import node_config as config
+import sensor
 
 class Node:
 	id = None
@@ -28,23 +30,14 @@ class Node:
 			cursor.execute(sql, (self.identifier, self.name, datetime.datetime.utcnow(), datetime.datetime.utcnow()))
 
 	def get_configs(self, cursor):
-		return NodeConfig.get_configs_by_node_id(self.id, cursor)
+		return config.NodeConfig.get_configs_by_node_id(cursor, self.id)
 		# return [{'formula': {'0': int(1 << 8), '1': 1}}, {'formula': {'2': int(1 << 24), '3': int(1 << 16), '4': int(1 << 8), '5': 1}}]
-
-	def new_measurement(self, value, cursor, created_at = None):
-		if created_at is None:
-			created_at = datetime.datetime.utcnow()
-		else:
-			created_at = datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
-		sql = "INSERT INTO measurements(sensor_id, value, created_at) VALUES (%s, %s, %s)"
-		cursor.execute(sql, (int(self.id), value, created_at))
 
 	@staticmethod
 	def init(json_node):
 		if json_node is None:
 			return None
 		new_node = Node()
-		print "Json node: " + str(json_node)
 
 		if 'id' in json_node:
 			new_node.id = int(json_node['id'])
@@ -67,6 +60,8 @@ class Node:
 		# Query params always with %s, must pass a tuple
 		cursor.execute("SELECT * FROM nodes WHERE identifier = (%s)", (node_identifier,))
 		results = cursor.fetchall()
+		if len(results) == 0:
+			return None
 		# Get last element
 		result = results[-1]
 		# Query results are tuples
@@ -104,29 +99,36 @@ class Node:
 		measurements = slots[1:]
 		# The connection will remain open after this
 		# The cursor is closed after this block
-		with dbconn.cursor() as curs:
-			node = Node.get_by_identifier_or_create(curs, node_identifier)
+		with dbconn.cursor() as cursor:
+			node = Node.get_by_identifier_or_create(cursor, node_identifier)
 			if node is None:
 				print "Node %s doesn't exist" % node_identifier
 				return False
 			else:
 				print "Node %s: %s" % (node.identifier, node.name)
-				configs = node.get_configs(curs)
+				configs = node.get_configs(cursor)
 				if configs is None:
 					return False
 				results = []
-				for config in configs:
+				for cfg in configs:
 					values = []
-					formula = config['formula']
-					for key, value in config.iteritems():
+					formula = cfg.formula
+					if formula is None:
+						continue
+					if isinstance(formula, str):
+						formula = json.loads(formula)
+					for key, value in formula.iteritems():
 						if int(key) < len(measurements):
-							values = values + [int(measurements[int(key)]) * float(config[key])]
+							values = values + [int(measurements[int(key)]) * float(formula[key])]
 						else:
 							break
-					results = results + [sum(values)]
+					result = sum(values)
+					sens = sensor.Sensor.get_by_id(cursor, cfg.sensor_id)
+					if sens is None:
+						continue
+					sens.new_measurement(cursor, result)
+					results = results + [result]
 				print "Got results: ", results
-				for result in results:
-					node.new_measurement(result, curs)
 				return True
 		return False
 
