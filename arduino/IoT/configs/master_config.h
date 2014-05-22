@@ -42,7 +42,7 @@
 #define PIR_PORT 0
 
 //DS18B20
-#define DS18B20_PORT 1
+#define DS18B20_PORT 0
 #define DS18B20_PIN 4
 
 // When MINIMUM_POWER is defined,
@@ -51,7 +51,7 @@
 // #define MINIMUM_POWER
 
 //Action features
-#define ACTION
+//#define ACTION
 #if defined(ACTION)
   #if defined(MASTER)
     #define ACTION_MASTER
