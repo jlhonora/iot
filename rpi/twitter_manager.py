@@ -7,6 +7,7 @@ import yaml
 import psycopg2
 import sensor
 import random
+import math
 
 def get_random_phrase():
 	phrases = ["Yesterday I ran %.1f kms!", "Last night I went jogging for %.1f kms :)", "I'm going to sleep after running %.1f kms"]
@@ -20,18 +21,26 @@ def get_no_activity_phrase():
 	phrases = ["Ooops, no running yesterday. @jlhonora, is everything fine?", "I always run, but the system is not working >:|. It's @jlhonora's fault"]
 	return random.choice(phrases)
 
-def get_distance_for_date(date):
-	print "Getting ran distance for " + str(date)
+def get_laps_for_date(date):
+	print "Getting ran laps for " + str(date)
 	with psycopg2.connect("dbname=pgtest2db user=pgtest2user") as dbconn:
 		with dbconn.cursor() as cursor:
 			counter = sensor.Sensor.get_by_name(cursor, "Antu Counter")
 			# Get all measurements betweeen the date and one day before
-			cursor.execute("SELECT value FROM measurements WHERE (sensor_id = (%s)) AND (created_at BETWEEN (%s) AND (%s))", (counter.id, date - datetime.timedelta(days = 1), date ))
+			start_date = date - datetime.timedelta(days = 1)
+			end_date = date
+			print "Querying from " + str(start_date) + " to " + str(end_date)
+			cursor.execute("SELECT value FROM measurements WHERE (sensor_id = (%s)) AND (created_at BETWEEN (%s) AND (%s))", (counter.id, start_date, end_date))
 			meas = cursor.fetchall()
+			print "0: " + str(meas[0][0])
+			print "1: " + str(meas[-1][0])
 			if meas is None or len(meas) < 2:
 				return 0.0;
 			# The result is an array of tuples
 			return (meas[-1][0] - meas[0][0])
+
+def laps2km(laps):
+	return (laps * (2.0 * math.pi * 0.14)) / 1000.0;
 
 def get_twitter_api():
 	with open('twitter_api_config.yaml', 'r') as f:
@@ -43,7 +52,10 @@ def get_twitter_api():
 	return None
 
 def tweet(notFake = True):
-	distance = get_distance_for_date(datetime.date.today())
+	laps = get_laps_for_date(datetime.datetime.utcnow())
+	print "Laps: %.1f" % laps
+	distance = laps2km(laps)
+	print "Distance: %.1f km" % distance
 	phrase = ""
 	if (distance < 0.001) or (distance > 15.0):
 		phrase = get_no_activity_phrase()
@@ -66,10 +78,10 @@ def test():
 	
 if __name__ == '__main__':
 
-	test()
+	# test()
 
 	# Schedule job
-	schedule.every().day.at("07:30").do(tweet)
+	schedule.every().day.at("11:00").do(tweet)
 
 	while True:
 		schedule.run_pending()
