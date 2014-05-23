@@ -11,4 +11,7 @@ python worker.py              &
 python api_manager.py &
 
 # Reads from the serial port and sends messages to api_manager
-python reader.py      &
+python reader.py	&
+
+# Sends a tweet with the ran distance 
+python twitter_manager.py      &
