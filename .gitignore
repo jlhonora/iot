@@ -8,3 +8,5 @@ arduino/IoT/libraries
 *.pyc
 
 *.rdb
+
+twitter_api_config.yaml
