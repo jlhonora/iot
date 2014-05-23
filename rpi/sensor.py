@@ -73,12 +73,7 @@ class Sensor:
 		# Get last element
 		result = results[-1]
 		# Query results are tuples
-		json_sensor = {}
-		json_sensor['id'] = result[0]
-		json_sensor['sensor_type'] = result[1]
-		json_sensor['name'] = result[2]
-		json_sensor['created_at'] = result[3]
-		json_sensor['updated_at'] = result[4]
+		json_sensor = Sensor.tuple2json(result)
 		return Sensor.init(json_sensor)
 
 	@staticmethod
@@ -89,3 +84,23 @@ class Sensor:
 			sensor.save()
 		return sensor
 
+	@staticmethod
+	def get_by_name(cursor, sensor_name):
+		cursor.execute("SELECT * FROM sensors WHERE name = (%s)", (sensor_name,))
+		results = cursor.fetchall()
+		# Get last element
+		result = results[-1]
+		# Query results are tuples
+		json_sensor = Sensor.tuple2json(result)
+		return Sensor.init(json_sensor)
+
+	@staticmethod
+	def tuple2json(tup):
+		json = {}
+		json['id'] = tup[0]
+		json['sensor_type'] = tup[1]
+		json['name'] = tup[2]
+		json['created_at'] = tup[3]
+		json['updated_at'] = tup[4]
+		return json
+		
