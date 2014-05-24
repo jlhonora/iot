@@ -128,4 +128,4 @@ if __name__ == '__main__':
 	while True:
 		schedule.run_pending()
 		# Sleep two minutes
-		time.sleep(120)
+		time.sleep(30)
