@@ -37,29 +37,38 @@ def safe_open(serial_port):
 		serial_port.open()
 
 def post_data(data):
+	if data is None or len(data) == 0:
+		print "Invalid data"
+		return
+	if data[0] is not '$':
+		print "Discarding ", str(data)
+		return
 	json_data = {
-		'payload': data,
+		'payload': data.strip(),
 		'received_at': strftime("%Y-%m-%d %H:%M:%S", gmtime())
 	}
 
 	req = urllib2.Request('http://127.0.0.1:8081')
 	req.add_header('Content-Type', 'application/json')
 
-	response = urllib2.urlopen(req, json.dumps(json_data))
+	try:
+		response = urllib2.urlopen(req, json.dumps(json_data))
+	except:
+		print "Response failed"
 
 def post_test_data():
 	#post_data(str("%d,1,2,255,255,255,255" % random.randint(1, 20)))
 	post_data(str("1000,1,2,255,255,255,255"))
 
 def run(serial_port = None):
-	#if serial_port == None:
-	#	serial_port = get_serial_port()
-	#safe_open(serial_port)
+	if serial_port == None:
+		serial_port = get_serial_port()
+	safe_open(serial_port)
 	while True:
-		# post_data(serial_port.readline())
+		post_data(serial_port.readline())
 		# uncomment for testing
-		time.sleep(1)
-		post_test_data()
+		#time.sleep(1)
+		#post_test_data()
 
 if __name__ == "__main__":
 	print "Starting serial port parser"

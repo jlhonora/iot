@@ -7,9 +7,7 @@ import sensor
 import node_config as config
 import json
 
-def insert_node(cursor):
-	identifier = str(1000)
-	name = "Antu Node"
+def insert_node(cursor, identifier, name):
 	sql = "INSERT INTO nodes(identifier, name, created_at) VALUES (%s, %s, %s) RETURNING *"
 	cursor.execute(sql, (identifier, name, datetime.datetime.utcnow()))
 	node_id = cursor.fetchone()[0]
@@ -46,11 +44,20 @@ if __name__ == "__main__":
 	with psycopg2.connect("dbname=pgtest2db user=pgtest2user") as conn:
 		conn.autocommit = True
 		with conn.cursor() as cursor:
-			node_id = insert_node(cursor)
-			configs = [{'name': 'Battery', 'formula': {'0': int(1 << 8), '1': 1}}, {'name': 'Counter 32 bit', 'formula': {'2': int(1 << 24), '3': int(1 << 16), '4': int(1 << 8), '5': 1}}]
+			# Antu node
+			node_id = insert_node(cursor, str(1035), "Antu Node")
+			# Formulas for batteries (10-bit ADC) is (num / 2^precision) * voltage * voltage_div
+			# In this case that is (num / 1024) * 3.3 * 2
+			configs = [{'name': 'Battery', 'formula': {'8': 0.006445}}, {'name': 'Counter 32 bit', 'formula': {'2': int(1 << 16), '3': int(1)}}]
 			sensor_id = insert_sensor(cursor, "Battery")
 			insert_config(cursor, node_id, sensor_id, configs[0])
 			sensor_id = insert_sensor(cursor, "Antu Counter", "counter")
 			insert_config(cursor, node_id, sensor_id, configs[1])
+
+			# Main node
+			node_id = insert_node(cursor, str(1), "Master Node")
+			configs = [{'name': 'Battery', 'formula': {'8': 0.006445}}]
+			sensor_id = insert_sensor(cursor, "Battery")
+			insert_config(cursor, node_id, sensor_id, configs[0])
 	print "Done"
 

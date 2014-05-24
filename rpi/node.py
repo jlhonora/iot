@@ -77,7 +77,7 @@ class Node:
 		node = Node.get_by_identifier(cursor, node_identifier)
 		if node is None:
 			node = Node.init({'identifier': node_identifier})
-			node.save()
+			node.save(cursor)
 		return node
 
 	@staticmethod
@@ -94,6 +94,11 @@ class Node:
 	@staticmethod
 	def process_payload(dbconn, payload):
 		dbconn.autocommit = True
+		if payload is None or len(payload) == 0:
+			print "Invalid payload"	
+			return True
+		if payload[0] == '$':
+			payload = payload[1:]
 		slots = payload.split(',')	
 		node_identifier = slots[0]
 		measurements = slots[1:]
