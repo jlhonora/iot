@@ -9,11 +9,11 @@ import sensor
 import random
 
 def get_random_phrase():
-	phrases = ["Yesterday I ran %.1f kms!", "Last night I went jogging for %.1f kms :)", "I'm going to sleep after running %.1f kms"]
+	phrases = ["Yesterday I ran %.1f km!", "Last night I went jogging for %.1f km :)", "I'm going to sleep after running %.1f km"]
 	return random.choice(phrases)
 
 def get_low_activity_phrase():
-	phrases = ["Lazy day yesterday, just %.1f", "Didn't feel like running yesterday, I did only %.1f kms"]
+	phrases = ["Lazy day yesterday, just %.1f", "Didn't feel like running yesterday, I did only %.1f km"]
 	return random.choice(phrases)
 	
 def get_no_activity_phrase():
