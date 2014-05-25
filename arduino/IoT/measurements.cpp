@@ -31,6 +31,8 @@ void measurements_initialize() {
   power_adc_disable();
 
   #if PIR_PORT > 0
+  // Initialize the EEPROM-saved value
+  load_pir_count();
   // Attach a PIR, water sensor or other
   // interrupt and count sensor to INT1.
   // Execute pir_count whenever this interrupt
@@ -93,9 +95,11 @@ void measurements_get(uint16_t *values)
 	  // pir_count_value: counts since last sent packet
 	  // pir_count_integral: counts since node startup
       #if PIR_PORT > 0
-      sprintf(debug_str, "PIR: %u", pir_count_value);
+      sprintf(debug_str, "PIR: %lu", (uint32_t) pir_count_integral);
       debug(debug_str);
       values[((port-1) << 1) + 1] = (uint16_t) pir_count_value;
+      // Save integral count to eeprom
+      save_pir_count();
       #if PIR_PORT <= 2
 	  port++;
       values[((port-1) << 1) + 1] = (uint16_t) (pir_count_integral & 0xFFFF);
