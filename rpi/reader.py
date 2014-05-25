@@ -36,7 +36,7 @@ def safe_open(serial_port):
 	if not serial_port.isOpen():
 		serial_port.open()
 
-def post_data(data):
+def post_data(data, url):
 	if data is None or len(data) == 0:
 		print "Invalid data"
 		return
@@ -48,7 +48,7 @@ def post_data(data):
 		'received_at': strftime("%Y-%m-%d %H:%M:%S", gmtime())
 	}
 
-	req = urllib2.Request('http://127.0.0.1:8081')
+	req = urllib2.Request(url)
 	req.add_header('Content-Type', 'application/json')
 
 	try:
@@ -58,14 +58,16 @@ def post_data(data):
 
 def post_test_data():
 	#post_data(str("%d,1,2,255,255,255,255" % random.randint(1, 20)))
-	post_data(str("1000,1,2,255,255,255,255"))
+	post_data(str("1000,1,2,255,255,255,255"), "http://127.0.0.1:8081")
 
 def run(serial_port = None):
 	if serial_port == None:
 		serial_port = get_serial_port()
 	safe_open(serial_port)
 	while True:
-		post_data(serial_port.readline())
+		serial_data = serial_port.readline()
+		post_data(serial_data, "http://127.0.0.1:8081")
+		post_data(serial_data, "http://192.168.0.19:7654/api/v1/iot")
 		# uncomment for testing
 		#time.sleep(1)
 		#post_test_data()
