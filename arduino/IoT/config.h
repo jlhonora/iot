@@ -1,7 +1,7 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define NODEID 1
+#define NODEID 1035
 #define NETWORKID 100
 
 //Opcion de Placa
@@ -11,14 +11,14 @@
 
 //Opcion de funcionalidad
 
-#define MASTER
-#define MASTER_SENSING
+// #define MASTER
+//#define MASTER_SENSING
 // If defined, the node does not send
 // ACKs to the network
 // #define LISTEN_ONLY
 // #define RELAY
 // #define RELAY_SENSING
-//#define ENDNODE
+#define ENDNODE
 
 //Define to get datalogging behaviour
 //#define DATALOGGING
@@ -26,24 +26,24 @@
 ////////////////
 //Constantes
 //Unidades de 1 ms (15000 milisegundos)
-#define SLEEP_TIME 120000LLU
+#define SLEEP_TIME 12000LLU
 #define SLEEP_TIME_S (SLEEP_TIME/1000)
 #define ACTION_TIME 1000LLU
 #define ACTION_TIME_S (ACTION_TIME/1000)
 
 //DHT
-#define DHT_PORT 1
+#define DHT_PORT 0
 #define DHT_PIN 4
 
 // Include a PIR, water sensor or
 // other interrupt-and-count peripheral
 // It is included in the analog values, so in the API
 // it should be defined in port 7 (port 4 analog)
-#define PIR_PORT 0
+#define PIR_PORT 1
 
 //DS18B20
-#define DS18B20_PORT 0
-#define DS18B20_PIN 4
+#define DS18B20_PORT 4
+#define DS18B20_PIN 7
 
 // When MINIMUM_POWER is defined,
 // the LEDs are not turned on, there are
@@ -103,7 +103,7 @@
 #define BATTERY_PIN 5
 #endif
 
-// For serial gateway and functionality
+// For serial gateway functionality
 #define SERIAL_IDLE      0x01
 #define SERIAL_RECEIVING 0x02
 #define SERIAL_AVAILABLE 0x04
