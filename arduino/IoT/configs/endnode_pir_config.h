@@ -42,8 +42,8 @@
 #define PIR_PORT 1
 
 //DS18B20
-#define DS18B20_PORT 0
-#define DS18B20_PIN 4
+#define DS18B20_PORT 4
+#define DS18B20_PIN 7
 
 // When MINIMUM_POWER is defined,
 // the LEDs are not turned on, there are
