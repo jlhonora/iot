@@ -18,7 +18,7 @@ def get_reference_from_distance(distance):
 	elements = elements + [('Central Parks', 4.0)]
 	element = random.choice(elements)
 	units = distance / element[1]
-	if units > 1.0:
+	if units > 1.5:
 		units = str(int(round(units)))
 	else:
 		units = str("%.1f" % units)
