@@ -9,6 +9,7 @@ import string
 import random
 import node_config as config
 import sensor
+from math import *
 
 class Node:
 	id = None
@@ -124,7 +125,10 @@ class Node:
 						formula = json.loads(formula)
 					for key, value in formula.iteritems():
 						if int(key) < len(measurements):
-							values = values + [int(measurements[int(key)]) * float(formula[key])]
+							x = int(measurements[int(key)])
+							f = formula[key]
+							code = parser.expr(f).compile()
+							values = values + [eval(code)]
 						else:
 							break
 					result = sum(values)
