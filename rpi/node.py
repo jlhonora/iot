@@ -9,6 +9,7 @@ import string
 import random
 import node_config as config
 import sensor
+import parser
 from math import *
 
 class Node:

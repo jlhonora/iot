@@ -48,11 +48,13 @@ if __name__ == "__main__":
 			node_id = insert_node(cursor, str(1035), "Antu Node")
 			# Formulas for batteries (10-bit ADC) is (num / 2^precision) * voltage * voltage_div
 			# In this case that is (num / 1024) * 3.3 * 2
-			configs = [{'name': 'Battery', 'formula': {'8': "x * 0.006445"}}, {'name': 'Counter 32 bit', 'formula': {'2': "x * 65536", '3': "x"}}, {'name': 'Temp', 'formula': {'6': "(x - 5500) / 1000"}}]
+			configs = [{'name': 'Battery', 'formula': {'8': "x * 0.006445"}}, {'name': 'Counter 32 bit', 'formula': {'2': "x * 65536", '3': "x"}}, {'name': 'Temp', 'formula': {'7': "(x - 5500.0) / 100.0"}}]
 			sensor_id = insert_sensor(cursor, "Battery")
 			insert_config(cursor, node_id, sensor_id, configs[0])
 			sensor_id = insert_sensor(cursor, "Antu Counter", "counter")
 			insert_config(cursor, node_id, sensor_id, configs[1])
+			sensor_id = insert_sensor(cursor, "Antu Temp", "default")
+			insert_config(cursor, node_id, sensor_id, configs[2])
 
 			# Main node
 			node_id = insert_node(cursor, str(1), "Master Node")
