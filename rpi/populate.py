@@ -59,7 +59,7 @@ if __name__ == "__main__":
 			# Main node
 			node_id = insert_node(cursor, str(1), "Master Node")
 			configs = [{'name': 'Battery', 'formula': {'8': "x * 0.006445"}}]
-			sensor_id = insert_sensor(cursor, "Battery")
+			sensor_id = insert_sensor(cursor, "Main Battery")
 			insert_config(cursor, node_id, sensor_id, configs[0])
 	print "Done"
 
