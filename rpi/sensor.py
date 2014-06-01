@@ -36,8 +36,9 @@ class Sensor:
 			created_at = datetime.datetime.utcnow()
 		else:
 			created_at = datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
-		sql = "INSERT INTO measurements(sensor_id, value, created_at) VALUES (%s, %s, %s)"
-		cursor.execute(sql, (int(self.id), value, created_at))
+		updated_at = datetime.datetime.strptime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S")
+		sql = "INSERT INTO measurements(sensor_id, value, created_at, updated_at) VALUES (%s, %s, %s, %s)"
+		cursor.execute(sql, (int(self.id), value, created_at, updated_at))
 
 	@staticmethod
 	def init(json_sensor):
