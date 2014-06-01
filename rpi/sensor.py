@@ -21,10 +21,10 @@ class Sensor:
 
 	def save(self, cursor):
 		if self.id is not None:
-			sql = "UPDATE sensors SET name = (%s), updated_at=(%s) WHERE id = (%s)"
-			cursor.execute(sql, (self.name, datetime.datetime.utcnow(), self.id))
+			sql = "UPDATE sensors SET name = (%s), stype = (%s), updated_at = (%s) WHERE id = (%s)"
+			cursor.execute(sql, (self.name, self.sensor_type, datetime.datetime.utcnow(), self.id))
 		else:
-			sql = "INSERT INTO sensors(stype, name, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)"
+			sql = "INSERT INTO sensors(stype, name, created_at, updated_at) VALUES (%s, %s, %s, %s)"
 			timestamp = datetime.datetime.now()
 			cursor.execute(sql, (self.sensor_type, self.name, timestamp, timestamp))
 
@@ -36,9 +36,9 @@ class Sensor:
 			created_at = datetime.datetime.utcnow()
 		else:
 			created_at = datetime.datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
-		updated_at = datetime.datetime.strptime(datetime.datetime.utcnow(), "%Y-%m-%d %H:%M:%S")
-		sql = "INSERT INTO measurements(sensor_id, value, created_at, updated_at) VALUES (%s, %s, %s, %s)"
-		cursor.execute(sql, (int(self.id), value, created_at, updated_at))
+		sql = "INSERT INTO measurements(sensor_id, value, created_at) VALUES (%s, %s, %s)"
+		cursor.execute(sql, (int(self.id), value, created_at))
+		self.save(cursor)
 
 	@staticmethod
 	def init(json_sensor):
