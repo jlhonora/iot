@@ -53,6 +53,7 @@ def post_data(data, url):
 
 	try:
 		response = urllib2.urlopen(req, json.dumps(json_data))
+		response.close()
 	except:
 		print "Response failed"
 
