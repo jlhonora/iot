@@ -100,7 +100,7 @@ def tweet(notFake = True):
 	distance = laps2km(laps)
 	print "Distance: %.1f km" % distance
 	phrase = ""
-	if (distance < 0.001) or (distance > 15.0):
+	if (distance < 0.001) or (distance > 15.5):
 		phrase = get_no_activity_phrase(distance)
 	elif distance < 0.8:
 		phrase = get_low_activity_phrase(distance)
