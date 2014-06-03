@@ -53,7 +53,7 @@ def get_random_phrase(distance):
 	phrases = phrases + ["Really happy (and a bit tired) after running %s %s :O (%.1f km)" % (units, reference, distance)]
 	phrases = phrases + ["Fast as Sonic. %.1f km last night, whoa!" % distance]
 	phrases = phrases + ["Just completed a %.1f km run with #AntuKeeper, keep up!" % distance]
-	phrases = phrases + ["Treading light for %.f km, good night pals :)" % distance]
+	phrases = phrases + ["Treading light for %.1f km, good night :)" % distance]
 	return random.choice(phrases)
 
 def get_low_activity_phrase(distance):
