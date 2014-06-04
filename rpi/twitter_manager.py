@@ -85,6 +85,16 @@ def get_laps_for_date(date):
 def laps2km(laps):
     return (laps * (2.0 * math.pi * 0.14)) / 1000.0;
 
+def get_last_battery():
+    with psycopg2.connect("dbname=pgtest2db user=pgtest2user") as dbconn:
+        with dbconn.cursor() as cursor:
+            counter = sensor.Sensor.get_by_name(cursor, "Battery")
+            cursor.execute("SELECT value FROM measurements WHERE (sensor_id = (%s)) ORDER BY id DESC LIMIT 1", (counter.id))
+            meas = cursor.fetchall()
+            print "0: " + str(meas[0][0])
+            return meas[0][0]
+    
+
 def get_twitter_api():
     with open('twitter_api_config.yaml', 'r') as f:
         doc = yaml.load(f)
@@ -106,17 +116,32 @@ def tweet(notFake = True):
         phrase = get_low_activity_phrase(distance)
     else:
         phrase = get_random_phrase(distance)
-    api = get_twitter_api()
     if notFake:
+        api = get_twitter_api()
         status = api.PostUpdate(phrase)
         print "Posted update with status: " + str(status)
     else:
         print phrase
 
+def check_battery(notFake = True):
+    battery = get_last_battery()
+    print "Battery: %.3f" % battery
+    if battery > 3.85:
+        print "Battery OK"
+    else:
+        print "Battery low!"
+        if notFake:
+            api = get_twitter_api()
+            status = api.PostUpdate("@jlhonora Battery is running low")
+            print "Posted update with status: " + str(status)
+        else:
+            print phrase
+
 def test():
     get_reference_from_distance_test()
     get_twitter_api()
     tweet(False)
+    check_battery(False)
     
 if __name__ == '__main__':
 
@@ -124,8 +149,9 @@ if __name__ == '__main__':
 
     # Schedule job
     schedule.every().day.at("11:00").do(tweet)
+    schedule.every().day.at("22:00").do(check_battery)
 
     while True:
         schedule.run_pending()
-        # Sleep two minutes
+        # Sleep 30 seconds
         time.sleep(30)
