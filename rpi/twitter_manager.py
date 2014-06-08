@@ -57,7 +57,7 @@ def get_random_phrase(distance):
     return random.choice(phrases)
 
 def get_low_activity_phrase(distance):
-    phrases = ["Lazy day yesterday, just %.1f", "Didn't feel like running yesterday, I did only %.1f km"]
+    phrases = ["Lazy day yesterday, just %.1f", "Didn't feel like running yesterday, I did only %.1f km" % distance]
     return random.choice(phrases)
     
 def get_no_activity_phrase(distance):
