@@ -94,7 +94,7 @@ def get_last_battery():
     with psycopg2.connect("dbname=pgtest2db user=pgtest2user") as dbconn:
         with dbconn.cursor() as cursor:
             counter = sensor.Sensor.get_by_name(cursor, "Battery")
-            cursor.execute("SELECT value FROM measurements WHERE (sensor_id = (%s)) ORDER BY id DESC LIMIT 1", (counter.id))
+            cursor.execute("SELECT value FROM measurements WHERE (sensor_id = (%s)) ORDER BY id DESC LIMIT 1", (counter.id,))
             meas = cursor.fetchall()
             print "0: " + str(meas[0][0])
             return meas[0][0]
