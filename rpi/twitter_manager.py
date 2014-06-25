@@ -16,6 +16,11 @@ def get_reference_from_distance(distance):
     elements = elements + [('Eiffel Towers', 0.324)]
     elements = elements + [('Empire States', 0.443)]
     elements = elements + [('Central Parks', 4.0)]
+    elements = elements + [('Golden Gates', 2.7)]
+    elements = elements + [('Burj Khalifa towers', 0.828)]
+    elements = elements + [('laps around the Colosseum', 0.527)]
+    elements = elements + [('Rubgy fields', 0.118)]
+    elements = elements + [('Soccer fields', 0.120)]
     element = random.choice(elements)
     units = distance / element[1]
     if units > 1.5:
