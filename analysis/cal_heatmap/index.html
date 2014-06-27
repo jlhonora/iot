@@ -58,20 +58,21 @@ label {
       json_data[Date.parse(d.date) / 1000] = value;
     });
 
+    var nIntervals = 5;
     legendArray = [];
-    interval = (maxValue - minValue) / 5;
-    for (var i = 0; i < 5; i++) {
-      legendArray.push(minValue + i * interval)
+    interval = (maxValue - minValue) / nIntervals;
+    for (var i = 0; i < nIntervals - 1; i++) {
+      legendArray.push(Math.round(minValue + i * interval))
     }
 
     console.log(json_data);
 
     var cal = new CalHeatMap();
     cal.init({
+      data: json_data,
       range: 2,
       legend: legendArray,
       domain: "month",
-      data: json_data,
       start: Date.parse(data[0].date),
       end: Date.parse(data[data.length - 1].date),
       tooltip: true,
