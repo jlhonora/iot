@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="http://cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: relative;
+  width: 960px;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: steelblue;
+  fill-opacity: .9;
+}
+
+.x.axis path {
+  display: none;
+}
+
+label {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+</style>
+
+<body>
+  <div id="cal-heatmap"></div>
+
+  <script type="text/javascript">
+
+  d3.tsv("data.tsv", function(error, data) {
+    var json_data = {};
+
+    data.forEach(function(d) {
+      json_data[Date.parse(d.date) / 1000] = parseInt(d.value) / 400;
+    });
+
+    console.log(json_data);
+
+    var cal = new CalHeatMap();
+    cal.init({
+      range: 2,
+      domain: "month",
+      data: json_data,
+      start: Date.parse(data[0].date),
+      end: Date.parse(data[data.length - 1].date)
+    });
+  });
+
+  </script>
+</body>
+
