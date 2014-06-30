@@ -44,3 +44,22 @@ CREATE TABLE measurements
 	value			real, 
 	created_at		timestamp
 );
+
+CREATE TABLE users
+(
+	id				SERIAL PRIMARY KEY,
+	name			text,
+	key				text,
+	permissions		integer,
+	created_at		timestamp
+);
+
+CREATE TYPE kpi_type AS ENUM ('minute', 'hour', 'day', 'month');
+CREATE TABLE kpis
+(
+	id				SERIAL PRIMARY KEY,
+	type			kpi_type,
+	sensor_id		integer REFERENCES sensors (id),
+	value			real,
+	created_at		timestamp
+);
