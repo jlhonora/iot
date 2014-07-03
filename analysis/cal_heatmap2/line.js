@@ -14,11 +14,21 @@ d3.json("http://localhost:7654/api/v1/iot/sensors/2/measurements?interval=minute
 	data[0].value = 0;
   // format our data
   var dtgFormat = d3.time.format("%Y-%m-%dT%H:%M:%S");
+
+  var firstDate = null; 
+  var lastDate = null; 
+  var threshold = 3;
   
   data.forEach(function(d) { 
     d.dtg   = dtgFormat.parse(d.created_at.substr(0,19)); 
     d.mag   = d3.round(+d.value,1);
     d.depth = d3.round(+d.value,0);
+	if (firstDate == null && d.value > threshold) {
+		firstDate = d.dtg;
+	}
+	if (d.value > threshold) {
+		lastDate = d.dtg;
+	}
   });
 
 /******************************************************
@@ -82,7 +92,7 @@ d3.json("http://localhost:7654/api/v1/iot/sensors/2/measurements?interval=minute
 	.transitionDuration(500)
     .centerBar(true)	
 	.gap(1)                                            // bar width Keep increasing to get right then back off.
-    .x(d3.scale.linear().domain([-0.5, 13.5]))
+    .x(d3.scale.linear().domain([-0.5, 18.5]))
 	.elasticY(true)
 	.xAxis().tickFormat(function(v) {return v;});	
 
@@ -95,19 +105,20 @@ d3.json("http://localhost:7654/api/v1/iot/sensors/2/measurements?interval=minute
 	.transitionDuration(500)
     .centerBar(true)	
 	.gap(1)                    // bar width Keep increasing to get right then back off.
-    .x(d3.scale.linear().domain([0, 100]))
+    .x(d3.scale.linear().domain([5, 80]))
 	.elasticY(true)
 	.xAxis().tickFormat(function(v) {return v;});
 
   // time graph
   timeChart.width(960)
+	.renderArea(true)
     .height(150)
     .margins({top: 10, right: 10, bottom: 20, left: 40})
     .dimension(volumeByDay)
     .group(volumeByDayGroup)
     .transitionDuration(500)
 	.elasticY(true)
-    .x(d3.time.scale().domain([data[0].dtg, data[data.length - 1].dtg])) // scale and domain of the graph
+    .x(d3.time.scale().domain([firstDate, lastDate])) // scale and domain of the graph
     .xAxis();
 
 /****************************
