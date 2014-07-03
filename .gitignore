@@ -10,3 +10,5 @@ arduino/IoT/libraries
 *.rdb
 
 twitter_api_config.yaml
+
+crossfilter.min.js

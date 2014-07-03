@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
+
+  <title>Antu's activity</title>
+
+
+  <!-- D3.js lib -->
+  <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+  <script type="text/javascript" src="http://cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+
+  <!-- Calendar heatmaps -->
+  <link rel="stylesheet" href="http://cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+
+  <!-- Bootstrap and friends -->
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css" />
+
+  <!-- Local stylesheets -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="cal-heatmap"></div>
+
+  <div class='row'>
+    <div class='span6' id='activity-chart'>
+      <h4>1</h4>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span6' id='histogram-chart'>
+      <h4>2</h4>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span6' id='hourly-chart'>
+      <h4>3</h4>
+    </div>
+  </div>
+
+  <!--script type="text/javascript" src="heatmap.js"></script-->
+  <script type="text/javascript" src="line.js"></script>
+
+  <!-- Dimensional chartings library https://github.com/dc-js/dc.js -->
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.js"></script>
+
+  <!-- Crossfilter library for data analysis -->
+  <script type="text/javascript" src="crossfilter.min.js"></script>
+
+</body>
+
