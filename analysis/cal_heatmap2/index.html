@@ -4,7 +4,7 @@
   <meta charset='utf-8'>
   <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
 
-  <title>Antu's activity</title>
+  <title>activity</title>
 
 
   <!-- D3.js lib -->
@@ -28,28 +28,53 @@
 <body>
   <div id="cal-heatmap"></div>
 
-  <div class='row'>
-    <div class='span12' id='activity-chart'>
-      <h4>1</h4>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Panel title 1</h3>
     </div>
-  </div>
-  <div class='row'>
-    <div class='span6' id='histogram-chart'>
-      <h4>2</h4>
-    </div>
-    <div class='span6' id='hourly-chart'>
-      <h4>3</h4>
+    <div class="panel-body">
+      <a class="reset" href="javascript:resetAll()" style="display: none;">reset</a>
+      <div class='span12' id='activity-chart'>
+        <h4>1</h4>
+      </div>
+      <div class="row">
+        <div class='span6' id='active-chart'>
+          <h4>2</h4>
+        </div>
+        <div class='span6' id='speed-chart'>
+          <h4>3</h4>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!--script type="text/javascript" src="heatmap.js"></script-->
-  <script type="text/javascript" src="line.js"></script>
+  <!--div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Panel title 2</h3>
+    </div>
+    <div class="panel-body">
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Panel title 3</h3>
+    </div>
+    <div class="panel-body">
+      <div class='span6' id='speed-chart'>
+        <h4>3</h4>
+      </div>
+    </div>
+  </div-->
 
   <!-- Dimensional chartings library https://github.com/dc-js/dc.js -->
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.js"></script>
 
   <!-- Crossfilter library for data analysis -->
   <script type="text/javascript" src="crossfilter.min.js"></script>
+
+  <!--script type="text/javascript" src="heatmap.js"></script-->
+  <script type="text/javascript" src="line.js"></script>
 
 </body>
 
