@@ -61,8 +61,11 @@ def get_random_phrase(distance):
     phrases = phrases + ["Treading light for %.1f km, good night :)" % distance]
     return random.choice(phrases)
 
+def get_weekly_phrase(distance):
+    return "Last week I ran %.f km!" % distance
+
 def get_low_activity_phrase(distance):
-    phrases = ["Lazy day yesterday, just %.1f", "Didn't feel like running yesterday, I did only %.1f km" % distance]
+    phrases = ["Lazy day yesterday, just %.1f" % distance, "Didn't feel like running yesterday, I did only %.1f km" % distance]
     return random.choice(phrases)
     
 def get_no_activity_phrase(distance):
@@ -130,6 +133,20 @@ def tweet(notFake = True):
     else:
         print phrase
 
+def weekly_tweet(notFake = True):
+    base = datetime.datetime.utcnow()
+    laps = get_laps_for_timerange(base - datetime.timedelta(days=7), base)
+    print "Laps: %.1f" % laps
+    distance = laps2km(laps)
+    print "Distance: %.1f km" % distance
+    phrase = get_weekly_phrase(distance)
+    if notFake:
+        api = get_twitter_api()
+        status = api.PostUpdate(phrase)
+        print "Posted update with status: " + str(status)
+    else:
+        print phrase
+
 def check_battery(notFake = True):
     battery = get_last_battery()
     print "Battery: %.3f" % battery
@@ -151,11 +168,14 @@ def test():
     check_battery(False)
     
 if __name__ == '__main__':
+    random.seed(str(datetime.datetime.now()))
 
     # test()
 
     # Schedule job
     schedule.every().day.at("11:00").do(tweet)
+    schedule.every().monday.at("10:50").do(weekly_tweet)
+    schedule.every().day.do(attempt_monthly_tweet)
     schedule.every().day.at("22:00").do(check_battery)
 
     while True:
