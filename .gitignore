@@ -12,3 +12,5 @@ arduino/IoT/libraries
 twitter_api_config.yaml
 
 crossfilter.min.js
+
+rpi/assets/
