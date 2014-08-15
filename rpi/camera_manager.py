@@ -4,14 +4,26 @@ import picamera
 import time
 import os
 import threading
+import RPi.GPIO as GPIO
 
 class CameraManager:
     camera = None
     last_video = None
     last_image = None
+    light_channel = 16 # Connected to board pin 16 (BCM GPIO 23)
 
     def __init__(self):
         self.camera = picamera.PiCamera()
+        self.init_light()
+
+    def init_light(self):
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.light_channel, GPIO.OUT, initial = GPIO.LOW)
+
+    def light(self, turn_on = True):
+        if self.light_channel is None:
+            return
+        GPIO.output(self.light_channel, turn_on) 
 
     def get_video_filename(self):
         return 'assets/' + str(int(time.time())) + '.h264'
@@ -52,10 +64,17 @@ class CameraManager:
             self.last_image = current_file
         return current_file
 
+    def cleanup(self):
+        GPIO.cleanup(self.light_channel)
+
 if __name__ == '__main__':
+    GPIO.cleanup()
     manager = CameraManager()
     manager.capture_image()
     print "Captured image %s" % manager.last_image
+    manager.light(True)
     manager.capture_video_async()
-    time.sleep(13)
+    time.sleep(12)
+    manager.light(False)
     print "Captured video %s" % manager.last_video
+    manager.cleanup()
