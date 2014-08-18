@@ -42,7 +42,7 @@ class CameraManager:
         self.camera.stop_recording()
 
         # Replace old reference with new one
-        if replace_old and self.last_video is not None:
+        if replace_old:
             old_file = self.last_video
             self.last_video = current_file
             os.remove(old_file)
