@@ -14,6 +14,8 @@ class CameraManager:
 
     def __init__(self):
         self.camera = picamera.PiCamera()
+        self.camera.brightness = 100
+        self.camera.exposure_mode = "night"
         self.init_light()
 
     def init_light(self):
@@ -45,7 +47,8 @@ class CameraManager:
         if replace_old:
             old_file = self.last_video
             self.last_video = current_file
-            os.remove(old_file)
+            if old_file is not None:
+                os.remove(old_file)
         else:
             self.last_video = current_file
             
@@ -56,10 +59,11 @@ class CameraManager:
         self.camera.capture(current_file)
 
         # Replace old reference with new one
-        if replace_old and self.last_image is not None:
+        if replace_old:
             old_file = self.last_image
             self.last_image = current_file
-            os.remove(old_file)
+            if old_file is not None:
+                os.remove(old_file)
         else:
             self.last_image = current_file
         return current_file
