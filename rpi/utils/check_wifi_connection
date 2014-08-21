@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Checks WiFi connection and reconnects if disconnected
+# Place it in /usr/sbin and append the following line
+# to /etc/rc.local
+#
+# /usr/sbin/check_wifi_connection &
+#
+# Additionally, add a crontab to check the connection
+# every 3 minutes or so
+#
+# sudo crontab -e
+#
+# And add the following line
+#
+# */3 * * * * /usr/sbin/check_wifi_connection
+#
+# by JLH Beelinkme, Jun 2013
+
+echo "Connecting to WiFi"
+
+# Ask for the lsusb info
+lsusb_info=`lsusb`
+
+# Check if there's a Huawei modem
+modem_plugged=`echo $lsusb_info | grep WLAN | wc -l`
+if [[ $modem_plugged -eq 0 ]]
+then
+	echo "Couldn't find WiFi dongle, exiting"
+	exit 0
+else
+	echo "WiFi dongle found, getting connection info"
+fi	
+
+# Get the connection info
+connection_info=`ifconfig | grep -A 1 wlan0 | tail -1 | grep "inet addr.*Bcast" | wc -l`
+
+# Check if it is connected
+if [[ $connection_info -gt 0 ]]
+then
+	echo "WiFi connected"
+	exit 0
+else
+	echo "WiFi not connected, trying to reconnect"
+        ifdown wlan0
+        ifup wlan0
+	# Sometimes the gateway ends up badly configured
+	ip_addr=`ifconfig | grep -A 1 wlan | tail -1 | sed 's/^.*inet addr:\(.*\)  Bcast.*/\1/'`
+	gateway=`echo $ip_addr | sed -e 's/.[0-9]\{1,3\}$/.1/'`
+	route add default gw $gateway
+fi
