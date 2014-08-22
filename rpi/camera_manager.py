@@ -14,8 +14,8 @@ class CameraManager:
 
     def __init__(self):
         self.camera = picamera.PiCamera()
-        self.camera.brightness = 100
         self.camera.exposure_mode = "night"
+        self.camera.brightness = 55
         self.init_light()
 
     def init_light(self):
@@ -33,11 +33,11 @@ class CameraManager:
     def get_image_filename(self):
         return 'assets/' + str(int(time.time())) + '.jpg'
 
-    def capture_video_async(self, seconds = 12, replace_old = True):
+    def capture_video_async(self, seconds = 11, replace_old = True):
         t = threading.Thread(target = self.capture_video, args = (seconds, replace_old))
         t.start()
 
-    def capture_video(self, seconds = 12, replace_old = True):
+    def capture_video(self, seconds = 11, replace_old = True):
         current_file = self.get_video_filename()
         self.camera.start_recording(current_file)
         time.sleep(seconds)
@@ -74,7 +74,7 @@ class CameraManager:
 if __name__ == '__main__':
     GPIO.cleanup()
     manager = CameraManager()
-    manager.capture_image()
+    #manager.capture_image()
     print "Captured image %s" % manager.last_image
     manager.light(True)
     manager.capture_video_async()
