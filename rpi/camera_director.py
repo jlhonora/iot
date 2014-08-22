@@ -5,7 +5,7 @@ import sensor
 import camera_manager
 
 # Laps threshold
-threshold = 9
+threshold = 6
 
 def get_last_sample():
     with psycopg2.connect("dbname=pgtest2db user=pgtest2user") as dbconn:
@@ -46,6 +46,7 @@ if __name__ == '__main__':
             video = camera.last_video
         else:
             print "Not active"
+            time.sleep(12)
 
         # Update sample
         last_sample = current_sample
@@ -58,4 +59,3 @@ if __name__ == '__main__':
             discard_video(video)
 
         # Sleep some time
-        time.sleep(1)
