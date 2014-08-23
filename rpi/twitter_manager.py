@@ -47,7 +47,7 @@ def get_reference_from_distance_test():
     elif reference == 'Empire States':
         assert units == str(11)
     elif reference == 'Central Parks':
-        assert units == str(1)
+        assert units == str(1.3)
 
 def get_random_phrase(distance):
     phrases = []
@@ -126,12 +126,8 @@ def tweet(notFake = True):
         phrase = get_low_activity_phrase(distance)
     else:
         phrase = get_random_phrase(distance)
-    if notFake:
-        api = get_twitter_api()
-        status = api.PostUpdate(phrase)
-        print "Posted update with status: " + str(status)
-    else:
-        print phrase
+
+    perform_update(phrase, notFake)
 
 def weekly_tweet(notFake = True):
     base = datetime.datetime.utcnow()
@@ -161,16 +157,37 @@ def check_battery(notFake = True):
         else:
             print phrase
 
+def retry_loop(status, maxRetries = 7):
+    retries = 0
+    while retries < maxRetries:
+        try:
+            api = get_twitter_api()
+            status = api.PostUpdate(phrase)
+            print "Posted update with status: " + str(status)
+            return
+        except:
+            retries = retries + 1
+            delay = retries ** 4 + 15
+            print "Error while tweeting, retrying in %d seconds" % delay
+            time.sleep(delay)
+
+def perform_update(status, notFake = True, maxRetries = 7):
+    if notFake:
+        retry_loop(status, maxRetries)
+    else:
+        print status
+
 def test():
     get_reference_from_distance_test()
     get_twitter_api()
     tweet(False)
     check_battery(False)
+    retry_loop("Test")
     
 if __name__ == '__main__':
     random.seed(str(datetime.datetime.now()))
 
-    # test()
+    #test()
 
     # Schedule job
     schedule.every().day.at("11:00").do(tweet)
