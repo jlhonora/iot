@@ -3,7 +3,7 @@
 # Place it in /usr/sbin and append the following line
 # to /etc/rc.local
 #
-# /usr/sbin/check_wifi_connection &
+# /sbin/check_wifi_connection &
 #
 # Additionally, add a crontab to check the connection
 # every 3 minutes or so
@@ -12,9 +12,9 @@
 #
 # And add the following line
 #
-# */3 * * * * /usr/sbin/check_wifi_connection
+# */3 * * * * /sbin/check_wifi_connection > log.log 2>&1
 #
-# by JLH Beelinkme, Jun 2013
+# by JLH, Jun 2013
 
 echo "Connecting to WiFi"
 
