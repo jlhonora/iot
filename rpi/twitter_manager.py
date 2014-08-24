@@ -162,7 +162,7 @@ def retry_loop(status, maxRetries = 7):
     while retries < maxRetries:
         try:
             api = get_twitter_api()
-            status = api.PostUpdate(phrase)
+            status = api.PostUpdate(status)
             print "Posted update with status: " + str(status)
             return
         except:
