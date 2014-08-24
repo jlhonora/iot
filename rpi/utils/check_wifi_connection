@@ -18,6 +18,8 @@
 
 echo "Connecting to WiFi"
 
+export PATH=$PATH:/usr/sbin:/sbin
+
 # Ask for the lsusb info
 lsusb_info=`lsusb`
 
