@@ -104,7 +104,7 @@ def get_last_battery():
     
 
 def get_twitter_api():
-    with open('twitter_api_config.yaml', 'r') as f:
+    with open('twitter_api_config.yml', 'r') as f:
         doc = yaml.load(f)
         # Setup API
         api = twitter.Api(consumer_key=doc['consumer_key'], consumer_secret=doc['consumer_secret'], access_token_key=doc['access_token_key'], access_token_secret=doc['access_token_secret'])
