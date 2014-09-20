@@ -11,6 +11,7 @@ class Vine:
     username = None
     password = None
     credentials_file = 'vine_api_config.yml'
+    key = None
 
     def __init__(self):
         if self.username is None or self.password is None:
@@ -33,7 +34,9 @@ class Vine:
         req.add_header('Accept-Encoding', 'gzip')
         try:
             response = urllib2.urlopen(req)
-            print response.read()
+            r = response.read()
+            json_response = json.loads(r)
+            self.key = json_response['key']
             response.close()
             return True
         except Exception as e:
