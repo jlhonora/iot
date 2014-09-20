@@ -4,8 +4,14 @@
 
 import yaml
 import json
+import poster
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
+
 import urllib
 import urllib2
+
+import requests
 
 class Vine:
     username = None
@@ -13,8 +19,9 @@ class Vine:
     credentials_file = 'vine_api_config.yml'
     key = None
 
-    def __init__(self):
-        if self.username is None or self.password is None:
+    def __init__(self, key = None):
+        self.key = key
+        if self.username is None or self.password is None or self.key is None:
             self.init_with_file()
 
     def init_with_file(self, filename = credentials_file):
@@ -27,17 +34,17 @@ class Vine:
         if self.username is None or self.password is None:
             return False
         json_data = {'username':self.username,'password': self.password}
-        req = urllib2.Request("https://api.vineapp.com/users/authenticate", urllib.urlencode(json_data))
-        req.add_header('User-Agent', 'com.vine.iphone/1.0.5 (unknown, iPhone OS 5.1.1, iPhone, Scale/2.000000)')
-        req.add_header('Accept', '*/*')
-        req.add_header('Accept-Language', 'en, fr, de, ja, nl, it, es, pt, pt-PT, da, fi, nb, sv, ko, zh-Hans, zh-Hant, ru, pl, tr, uk, ar, hr, cs, el, he, ro, sk, th, id, ms, en-GB, ca, hu, vi, en-us;q=0.8')
-        req.add_header('Accept-Encoding', 'gzip')
+        headers = {}
+        headers['User-Agent'] = 'iphone/1.3.1 (iPad; iOS 6.1.3; Scale/1.00)'
+        headers['Accept'] = '*/*'
+        headers['Accept-Language'] = 'en;q=1, fr;q=0.9, de;q=0.8, ja;q=0.7, nl;q=0.6, it;q=0.5'
+        headers['Accept-Encoding'] = 'gzip'
+        print headers
         try:
-            response = urllib2.urlopen(req)
-            r = response.read()
-            json_response = json.loads(r)
-            self.key = json_response['key']
-            response.close()
+            req = requests.post("https://api.vineapp.com/users/authenticate", data = json_data, headers = headers)
+            print req.text
+            response_json = json.loads(req.text)
+            self.key = response_json['data']['key']
             return True
         except Exception as e:
             print "Response failed"
@@ -45,8 +52,33 @@ class Vine:
         return False
 
     def upload_video(self, filename):
-        self.authenticate()
+        if self.key is None:
+            self.authenticate()
+        files = {"file": (filename, open(filename, "rb"), 'video/mp4', {'Expires': '0'})}
+        headers = {}
+        headers['Host'] = 'media.vineapp.com'
+        headers['Proxy-Connection'] = 'keep-alive'
+        headers['Content-Type'] = 'video/mp4'
+        headers['X-Vine-Client'] = 'ios/1.3.1'
+        headers['Accept-Language'] = 'en;q=1, fr;q=0.9, de;q=0.8, ja;q=0.7, nl;q=0.6, it;q=0.5'
+        headers['Accept'] = '*/*'
+        headers['Vine-Session-Id'] = str(self.key)
+        headers['Accept-Encoding'] = 'gzip, deflate'
+        headers['Connection'] = 'keep-alive'
+        headers['User-Agent'] = 'iphone/1.3.1 (iPad; iOS 6.1.3; Scale/1.00)'
+        try:
+            print "Making request"
+            req = requests.put("https://media.vineapp.com/upload/videos/1.3.1.mp4", headers = headers, files = files)
+            print "Parsing response"
+            print str(req.json())
+            response.close()
+            return True
+        except Exception as e:
+            print "Response failed"
+            print str(e)
+        return False
         
 if __name__ == '__main__':
     api = Vine()
     print "Auth: " + str(api.authenticate())
+    api.upload_video('video.mp4')
