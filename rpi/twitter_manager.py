@@ -65,7 +65,7 @@ def get_weekly_phrase(distance):
     return "Last week I ran %.f km!" % distance
 
 def get_low_activity_phrase(distance):
-    phrases = ["Lazy day yesterday, just %.1f" % distance, "Didn't feel like running yesterday, I did only %.1f km" % distance]
+    phrases = ["Lazy day yesterday, just %.1f km" % distance, "Didn't feel like running yesterday, I did only %.1f km" % distance]
     return random.choice(phrases)
     
 def get_no_activity_phrase(distance):
