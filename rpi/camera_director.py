@@ -57,5 +57,3 @@ if __name__ == '__main__':
             save_video(video)
         else:
             discard_video(video)
-
-        # Sleep some time
