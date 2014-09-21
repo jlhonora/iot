@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import camera_manager
+import datetime
 from dateutil import parser
 import os
 import psycopg2
@@ -9,7 +10,7 @@ import youtube_manager
 import yaml
 
 # Laps threshold
-threshold = 6
+threshold = 4
 
 def get_last_sample():
     with psycopg2.connect("dbname=pgtest2db user=pgtest2user") as dbconn:
@@ -33,16 +34,19 @@ def discard_video(filename):
     print "Discarding " + str(filename)
 
 def video_available(filename = 'video.yml'):
-    if !os.path.exists(filename): 
+    if not os.path.exists(filename): 
         return False
     video_date = None
     video_url = None
     video_is_uploaded = False
     with open(filename, 'r') as f:
         doc = yaml.load(f)
-        video_date = parser.parse(doc['date'])
-        video_url = doc['url']
-        video_is_uploaded = doc['uploaded'] != "False"
+        if 'date' in doc:
+          video_date = parser.parse(doc['date'])
+        if 'url' in doc:
+          video_url = doc['url']
+        if 'uploaded' in doc:
+          video_is_uploaded = doc['uploaded'] != "False"
 
     # We can't use an already uploaded video
     if video_is_uploaded:

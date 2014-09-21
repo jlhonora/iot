@@ -133,12 +133,13 @@ def resumable_upload(insert_request):
       time.sleep(sleep_seconds)
 
 def upload_video(filename):
-  argparser.add_argument("--file", default=filename)
-  argparser.add_argument("--title", default="Antu the Hedgehog running")
-  argparser.add_argument("--description", default="twitter.com/runhedgie , github.com/jlhonora , honorato.org")
-  argparser.add_argument("--keywords", default="Animals, Hedgehog, Raspberry Pi, Infrared")
-  argparser.add_argument("--privacyStatus", default="public")
+  argparser.add_argument("--file", default = filename)
+  argparser.add_argument("--title", default = "Antu the Hedgehog running")
+  argparser.add_argument("--description", default = "twitter.com/runhedgie , github.com/jlhonora , honorato.org")
+  argparser.add_argument("--keywords", default = "Animals, Hedgehog, Raspberry Pi, Infrared")
+  argparser.add_argument("--privacyStatus", default = "public")
   args = argparser.parse_args()
+  args.noauth_local_webserver = True
 
   if not os.path.exists(args.file):
     exit("Please specify a valid file using the --file= parameter.")
