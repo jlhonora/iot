@@ -88,6 +88,7 @@ def save_video(filename):
 
 if __name__ == '__main__':
     camera = camera_manager.CameraManager()
+    camera.light(True)
     last_sample = None
     current_sample = None
     while True:
