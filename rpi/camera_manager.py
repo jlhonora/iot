@@ -33,11 +33,11 @@ class CameraManager:
     def get_image_filename(self):
         return 'assets/' + str(int(time.time())) + '.jpg'
 
-    def capture_video_async(self, seconds = 11, replace_old = True):
+    def capture_video_async(self, seconds = 12, replace_old = True):
         t = threading.Thread(target = self.capture_video, args = (seconds, replace_old))
         t.start()
 
-    def capture_video(self, seconds = 11, replace_old = True):
+    def capture_video(self, seconds = 12, replace_old = True):
         current_file = self.get_video_filename()
         self.camera.start_recording(current_file)
         time.sleep(seconds)
