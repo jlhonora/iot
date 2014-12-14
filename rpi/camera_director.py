@@ -20,15 +20,15 @@ def get_last_sample():
             meas = cursor.fetchall()
             return meas[0]
 
-def is_active(last_sample, current_sample):
-    if last_sample is None:
+def is_active(old_sample, new_sample):
+    if old_sample is None:
         return False
-    laps = current_sample[0]
-    timestamp = current_sample[1]
-    if last_sample[1] == timestamp:
-        return False
+    laps = new_sample[0]
+    timestamp = new_sample[1]
     
-    return (laps - last_sample[0]) > threshold
+    if (int(new_sample[0]) - int(old_sample[0])) >= threshold:
+        return True
+    return False
 
 def discard_video(filename):
     print "Discarding " + str(filename)
@@ -79,8 +79,12 @@ def attempt_upload(filename):
     data['url'] = result
     write_video_state(data)
 
-def save_video(filename):
-    if video_available():
+def save_video(filename, force_upload = True):
+    if filename is None:
+        print "Invalid filename"
+        return
+    if not force_upload and video_available():
+        print "Video available, discarding"
         discard_video(filename)
         return
     print "Saving " + str(filename)
@@ -97,19 +101,17 @@ if __name__ == '__main__':
         video = None
         if is_active(last_sample, current_sample):
             print "Is active, filming"
-            camera.capture_video_async()
-            time.sleep(12)
-            video = camera.last_video
+            video = camera.capture_video()
         else:
             print "Not active"
-            time.sleep(12)
 
+        time.sleep(13)
         # Update sample
         last_sample = current_sample
         current_sample = get_last_sample()
 
         # If still active, save
-        if is_active(last_sample, current_sample) and video is not None:
+        if is_active(last_sample, current_sample):
             save_video(video)
         else:
             discard_video(video)
