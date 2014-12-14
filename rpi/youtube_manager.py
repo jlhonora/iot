@@ -132,7 +132,17 @@ def resumable_upload(insert_request):
       print "Sleeping %f seconds and then retrying..." % sleep_seconds
       time.sleep(sleep_seconds)
 
+def convert_video(filename):
+  filename_no_ext = os.path.splitext(filename)[0]
+  print "Converting %s.h264 to %s.mp4" % (filename_no_ext, filename_no_ext)
+  os.popen("avconv -y -r 30 -i %s.h264 -vcodec copy %s.mp4" % (filename_no_ext, filename_no_ext))
+  return filename_no_ext + ".mp4"
+
 def upload_video(filename):
+  if filename is None:
+    return
+  if ".h264" in filename:
+    filename = convert_video(filename)
   argparser.add_argument("--file", default = filename)
   argparser.add_argument("--title", default = "Antu the Hedgehog running")
   argparser.add_argument("--description", default = "twitter.com/runhedgie , github.com/jlhonora , honorato.org")
