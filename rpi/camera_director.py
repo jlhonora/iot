@@ -62,8 +62,9 @@ def video_available(filename = 'video.yml'):
         return True
 
 def write_video_state(data, filename = 'video.yml'):
-    with open(filename, 'w') as outfile:
-        outfile.write(yaml.dump(data, default_flow_style=True))
+    with os.fdopen(os.open(filename, os.O_WRONLY | os.O_CREAT, 0666), 'w') as outfile:
+        outfile.truncate()
+        outfile.write(yaml.dump(data, default_flow_style=False))
 
 def attempt_upload(filename):
     data = dict(
