@@ -8,6 +8,7 @@ import psycopg2
 import sensor
 import random
 import math
+import os
 
 # Convert the distance to a unit-agnostic reference
 # Returns a unit (int) and a reference name (string)
@@ -143,6 +144,36 @@ def weekly_tweet(notFake = True):
     else:
         print phrase
 
+def tweet_video(filename = 'video.yml', notFake = True):
+    print "Attempting video upload"
+    if not os.path.exists(filename):
+        print "No video file, returning"
+        return
+    should_remove_file = True
+    with open(filename, 'r') as f:
+        doc = None
+        try:
+            doc = yaml.load(f)
+        except (yaml.parser.ParserError, yaml.scanner.ScannerError):
+            print "Invalid yaml file"
+
+        if doc is None:
+            should_remove_file = True
+        if 'uploaded' not in doc:
+            print "No 'uploaded' flag"
+        elif doc['uploaded'] != "True":
+            print "Video not uploaded"
+            should_remove_file = False
+        elif 'url' not in doc or len(doc['url'].strip()) <= 0:
+            print "Invalid url, returning"
+        else:
+            print "Uploading video %s" % doc['url']
+            api = get_twitter_api()
+            api.PostDirectMessage("Video is %s" % doc['url'], screen_name="jlhonora")
+    if should_remove_file:
+        print "Removing file %s" % filename
+        os.remove(filename)
+
 def check_battery(notFake = True):
     battery = get_last_battery()
     print "Battery: %.3f" % battery
@@ -178,8 +209,9 @@ def perform_update(status, notFake = True, maxRetries = 7):
         print status
 
 def test():
-    get_reference_from_distance_test()
     get_twitter_api()
+    tweet_video(notFake=True)
+    get_reference_from_distance_test()
     tweet(False)
     check_battery(False)
     retry_loop("Test")
@@ -191,6 +223,7 @@ if __name__ == '__main__':
 
     # Schedule job
     schedule.every().day.at("11:00").do(tweet)
+    schedule.every(30).minutes.do(tweet_video)
     #schedule.every().monday.at("10:50").do(weekly_tweet)
     #schedule.every().day.do(attempt_monthly_tweet)
     #schedule.every().day.at("22:00").do(check_battery)
