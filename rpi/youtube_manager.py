@@ -6,6 +6,7 @@ import os
 import random
 import sys
 import time
+import datetime
 
 from apiclient.discovery import build
 from apiclient.errors import HttpError
@@ -112,6 +113,8 @@ def resumable_upload(insert_request):
         return str("youtu.be/%s" % str(response['id']))
       else:
         exit("The upload failed with an unexpected response: %s" % response)
+    except TypeError:
+        error = "Unknown error, response: %s" % str(response)
     except HttpError, e:
       if e.resp.status in RETRIABLE_STATUS_CODES:
         error = "A retriable HTTP error %d occurred:\n%s" % (e.resp.status,
@@ -144,7 +147,7 @@ def upload_video(filename):
   if ".h264" in filename:
     filename = convert_video(filename)
   argparser.add_argument("--file", default = filename)
-  argparser.add_argument("--title", default = "Antu the Hedgehog running")
+  argparser.add_argument("--title", default = "Antu the Hedgehog running (%s)" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
   argparser.add_argument("--description", default = "twitter.com/runhedgie , github.com/jlhonora , honorato.org")
   argparser.add_argument("--keywords", default = "Animals, Hedgehog, Raspberry Pi, Infrared")
   argparser.add_argument("--privacyStatus", default = "public")
