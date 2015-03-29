@@ -10,7 +10,7 @@ import youtube_manager
 import yaml
 
 # Laps threshold
-threshold = 4
+threshold = 2
 
 def get_last_sample():
     with psycopg2.connect("dbname=pgtest2db user=pgtest2user") as dbconn:
@@ -62,9 +62,10 @@ def video_available(filename = 'video.yml'):
         return True
 
 def write_video_state(data, filename = 'video.yml'):
-    with os.fdopen(os.open(filename, os.O_WRONLY | os.O_CREAT, 0666), 'w') as outfile:
+    with os.fdopen(os.open(filename, os.O_WRONLY | os.O_CREAT), 'w') as outfile:
         outfile.truncate()
         outfile.write(yaml.dump(data, default_flow_style=False))
+    os.chmod(filename, 0666)
 
 def attempt_upload(filename):
     data = dict(
@@ -113,6 +114,6 @@ if __name__ == '__main__':
 
         # If still active, save
         if is_active(last_sample, current_sample):
-            save_video(video)
+            save_video(video, False)
         else:
             discard_video(video)
