@@ -223,7 +223,7 @@ if __name__ == '__main__':
 
     # Schedule job
     schedule.every().day.at("11:00").do(tweet)
-    schedule.every(30).minutes.do(tweet_video)
+    #schedule.every(5).minutes.do(tweet_video)
     #schedule.every().monday.at("10:50").do(weekly_tweet)
     #schedule.every().day.do(attempt_monthly_tweet)
     #schedule.every().day.at("22:00").do(check_battery)
