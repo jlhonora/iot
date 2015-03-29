@@ -42,6 +42,7 @@ class CameraManager:
         self.camera.start_recording(current_file)
         time.sleep(seconds)
         self.camera.stop_recording()
+        os.chmod(current_file, 0666)
 
         # Replace old reference with new one
         if replace_old:
@@ -57,6 +58,7 @@ class CameraManager:
     def capture_image(self, replace_old = True):
         current_file = self.get_image_filename()
         self.camera.capture(current_file)
+        os.chmod(current_file, 0666)
 
         # Replace old reference with new one
         if replace_old:
