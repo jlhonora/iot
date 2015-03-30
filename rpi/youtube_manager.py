@@ -7,13 +7,15 @@ import random
 import sys
 import time
 import datetime
+import argparse
 
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 from apiclient.http import MediaFileUpload
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
-from oauth2client.tools import argparser, run_flow
+from oauth2client import tools
+from oauth2client.tools import run_flow
 
 
 # Explicitly tell the underlying HTTP transport library not to retry, since
@@ -138,7 +140,11 @@ def resumable_upload(insert_request):
 def convert_video(filename):
   filename_no_ext = os.path.splitext(filename)[0]
   print "Converting %s.h264 to %s.mp4" % (filename_no_ext, filename_no_ext)
-  os.popen("avconv -y -r 30 -i %s.h264 -vcodec copy %s.mp4" % (filename_no_ext, filename_no_ext))
+  # No need to use avconv for now
+  # os.popen("avconv -y -r 30 -i %s.h264 -vcodec copy %s.mp4" % (filename_no_ext, filename_no_ext))
+  # Just copying the file does the trick
+  os.popen("cp %s.h264 %s.mp4" % (filename_no_ext, filename_no_ext))
+
   return filename_no_ext + ".mp4"
 
 def upload_video(filename):
@@ -146,12 +152,16 @@ def upload_video(filename):
     return
   if ".h264" in filename:
     filename = convert_video(filename)
-  argparser.add_argument("--file", default = filename)
-  argparser.add_argument("--title", default = "Antu the Hedgehog running (%s)" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
-  argparser.add_argument("--description", default = "twitter.com/runhedgie , github.com/jlhonora , honorato.org")
-  argparser.add_argument("--keywords", default = "Animals, Hedgehog, Raspberry Pi, Infrared")
-  argparser.add_argument("--privacyStatus", default = "public")
-  args = argparser.parse_args()
+  parser = argparse.ArgumentParser(description=__doc__,
+      formatter_class=argparse.RawDescriptionHelpFormatter,
+      parents=[tools.argparser],
+      conflict_handler = 'resolve')
+  parser.add_argument("--file", default = filename)
+  parser.add_argument("--title", default = "Antu the Hedgehog running (%s)" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+  parser.add_argument("--description", default = "twitter.com/runhedgie , github.com/jlhonora , honorato.org")
+  parser.add_argument("--keywords", default = "Animals, Hedgehog, Raspberry Pi, Infrared")
+  parser.add_argument("--privacyStatus", default = "public")
+  args = parser.parse_args()
   args.noauth_local_webserver = True
 
   if not os.path.exists(args.file):
@@ -165,5 +175,5 @@ def upload_video(filename):
     return None
 
 if __name__ == '__main__':
-  result = upload_video("video.mp4")
+  result = upload_video("assets/video.h264")
   print "Uploaded: %s" % str(result)
