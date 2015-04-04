@@ -17,4 +17,4 @@ python -u twitter_manager.py &
 python -u worker.py &
 
 # Creates videos continuously
-# sudo python -u camera_director.py &
+sudo python -u camera_director.py &
