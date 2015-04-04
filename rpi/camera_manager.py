@@ -12,7 +12,7 @@ class CameraManager:
     last_image = None
     light_channel = 16 # Connected to board pin 16 (BCM GPIO 23)
 
-    def __init__(self):
+    def setup(self):
         self.camera = picamera.PiCamera()
         self.camera.exposure_mode = "night"
         self.camera.brightness = 55
@@ -71,11 +71,15 @@ class CameraManager:
         return current_file
 
     def cleanup(self):
+        self.light(False)
         GPIO.cleanup(self.light_channel)
+        self.camera.close()
+        self.camera = None
 
 if __name__ == '__main__':
     GPIO.cleanup()
     manager = CameraManager()
+    manager.setup()
     #manager.capture_image()
     print "Captured image %s" % manager.last_image
     manager.light(True)

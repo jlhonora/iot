@@ -32,6 +32,7 @@ def is_active(old_sample, new_sample):
 
 def discard_video(filename):
     print "Discarding " + str(filename)
+    os.remove(filename)
 
 def video_available(filename = 'video.yml'):
     if not os.path.exists(filename): 
@@ -92,12 +93,33 @@ def save_video(filename, force_upload = True):
     print "Saving " + str(filename)
     attempt_upload(filename)
 
+def should_be_sleeping():
+    now = datetime.datetime.utcnow()
+    finish = now.replace(hour = 10, minute = 0, second = 0)
+    start = now.replace(hour = 23, minute = 0, second = 0)
+    if (now < start) and (now > finish):
+        return True
+    return False
+
 if __name__ == '__main__':
-    camera = camera_manager.CameraManager()
-    camera.light(True)
     last_sample = None
     current_sample = None
+    camera = None
     while True:
+        # If there's a video available then just
+        # stop filming
+        if should_be_sleeping() or video_available():
+            if camera is not None:
+                camera.cleanup()
+                camera = None
+            continue
+
+        # Setup the camera
+        if camera is None:
+            camera = camera_manager.CameraManager()
+            camera.setup()
+            camera.light(True)
+
         # Check if we should be filming
         current_sample = get_last_sample()
         video = None
