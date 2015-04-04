@@ -167,7 +167,7 @@ def tweet_video(filename = 'video.yml', notFake = True):
         elif 'url' not in doc or len(doc['url'].strip()) <= 0:
             print "Invalid url, returning"
         else:
-            print "Uploading video %s" % doc['url']
+            print "Tweeting video %s" % doc['url']
             api = get_twitter_api()
             api.PostDirectMessage("Video is %s" % doc['url'], screen_name="jlhonora")
     if should_remove_file:
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 
     # Schedule job
     schedule.every().day.at("11:00").do(tweet)
-    #schedule.every(5).minutes.do(tweet_video)
+    schedule.every().day.at("11:00").do(tweet_video)
     #schedule.every().monday.at("10:50").do(weekly_tweet)
     #schedule.every().day.do(attempt_monthly_tweet)
     #schedule.every().day.at("22:00").do(check_battery)
