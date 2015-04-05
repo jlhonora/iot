@@ -31,6 +31,8 @@ def is_active(old_sample, new_sample):
     return False
 
 def discard_video(filename):
+    if filename is None:
+        return
     print "Discarding " + str(filename)
     os.remove(filename)
 
