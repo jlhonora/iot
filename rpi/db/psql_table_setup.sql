@@ -44,6 +44,7 @@ CREATE TABLE measurements
 	value			real, 
 	created_at		timestamp
 );
+CREATE INDEX index_sensor_id_on_measurements ON measurements (sensor_id);
 
 CREATE TABLE users
 (
@@ -63,3 +64,4 @@ CREATE TABLE kpis
 	value			real,
 	created_at		timestamp
 );
+CREATE INDEX index_sensor_id_on_kpis ON kpis (sensor_id);
