@@ -6,6 +6,7 @@ import os
 import psycopg2
 import sensor
 import time
+import traceback
 import youtube_manager
 import yaml
 
@@ -34,7 +35,10 @@ def discard_video(filename):
     if filename is None:
         return
     print "Discarding " + str(filename)
-    os.remove(filename)
+    try:
+        os.remove(filename)
+    except OSError as e:
+        print traceback.format_exc(e)
 
 def video_available(filename = 'video.yml'):
     if not os.path.exists(filename): 
