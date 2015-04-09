@@ -45,6 +45,7 @@ CREATE TABLE measurements
 	created_at		timestamp
 );
 CREATE INDEX index_sensor_id_on_measurements ON measurements (sensor_id);
+CREATE INDEX index_sensor_id_c_at_on_measurements ON measurements (sensor_id, created_at);
 
 CREATE TABLE users
 (
