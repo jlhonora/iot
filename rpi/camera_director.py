@@ -37,8 +37,9 @@ def discard_video(filename):
     print "Discarding " + str(filename)
     try:
         os.remove(filename)
-    except OSError as e:
+    except OSError, e:
         print traceback.format_exc(e)
+        pass
 
 def video_available(filename = 'video.yml'):
     if not os.path.exists(filename): 
