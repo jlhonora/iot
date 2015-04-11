@@ -4,6 +4,7 @@ import picamera
 import time
 import os
 import threading
+import traceback
 import RPi.GPIO as GPIO
 
 class CameraManager:
@@ -49,7 +50,11 @@ class CameraManager:
             old_file = self.last_video
             self.last_video = current_file
             if old_file is not None:
-                os.remove(old_file)
+                try:
+                    os.remove(old_file)
+                except OSError, e:
+                    print traceback.format_exc(e)
+                    pass
         else:
             self.last_video = current_file
             
