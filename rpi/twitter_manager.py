@@ -119,7 +119,7 @@ def tweet(notFake = True):
     distance = laps2km(laps)
     print "Distance: %.1f km" % distance
     phrase = ""
-    if distance > 15.5:
+    if distance > 16.5:
         distance = 0.0
     if (distance < 0.05):
         phrase = get_no_activity_phrase(distance)
@@ -127,6 +127,8 @@ def tweet(notFake = True):
         phrase = get_low_activity_phrase(distance)
     else:
         phrase = get_random_phrase(distance)
+
+    # phrase = include_video(phrase)
 
     perform_update(phrase, notFake)
 
@@ -144,11 +146,22 @@ def weekly_tweet(notFake = True):
     else:
         print phrase
 
-def tweet_video(filename = 'video.yml', notFake = True):
-    print "Attempting video upload"
+def include_video(phrase, filename = 'video.yml'):
+    # TODO: Remove video
+    video = get_video(filename)
+    if video is None:
+        return phrase
+    final_phrase = " ".join([phrase, video])
+    if len(final_phrase) > 140:
+        remove_file(filename)
+        return phrase
+    remove_file(filename)
+    return phrase_and_video
+
+def get_video(filename = 'video.yml'):
     if not os.path.exists(filename):
         print "No video file, returning"
-        return
+        return None, False
     should_remove_file = True
     with open(filename, 'r') as f:
         doc = None
@@ -167,12 +180,28 @@ def tweet_video(filename = 'video.yml', notFake = True):
         elif 'url' not in doc or len(doc['url'].strip()) <= 0:
             print "Invalid url, returning"
         else:
-            print "Tweeting video %s" % doc['url']
-            api = get_twitter_api()
-            api.PostDirectMessage("Video is %s" % doc['url'], screen_name="jlhonora")
+            return doc['url'], False
+    return None, should_remove_file
+
+def tweet_video(filename = 'video.yml', notFake = True):
+    print "Attempting video upload"
+    video, should_remove_file = get_video(filename)
+    if video is not None:
+        print "Tweeting video %s" % video
+        api = get_twitter_api()
+        if notFake:
+            api.PostDirectMessage("Video is %s" % video, screen_name="jlhonora")
     if should_remove_file:
-        print "Removing file %s" % filename
+        remove_file(filename)
+
+def remove_file(filename)
+    print "Removing file %s" % filename
+    if filename is None:
+        return
+    try:
         os.remove(filename)
+    except OSError, e:
+        print "Couldn't remove file %s" % str(filename)
 
 def check_battery(notFake = True):
     battery = get_last_battery()
@@ -210,7 +239,7 @@ def perform_update(status, notFake = True, maxRetries = 7):
 
 def test():
     get_twitter_api()
-    tweet_video(notFake=True)
+    tweet_video(notFake=False)
     get_reference_from_distance_test()
     tweet(False)
     check_battery(False)
