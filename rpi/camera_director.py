@@ -119,7 +119,7 @@ if __name__ == '__main__':
             if camera is not None:
                 camera.cleanup()
                 camera = None
-            sleep(10)
+            time.sleep(10)
             continue
 
         # Setup the camera
