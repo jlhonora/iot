@@ -194,7 +194,7 @@ def tweet_video(filename = 'video.yml', notFake = True):
     if should_remove_file:
         remove_file(filename)
 
-def remove_file(filename)
+def remove_file(filename):
     print "Removing file %s" % filename
     if filename is None:
         return
@@ -243,12 +243,12 @@ def test():
     get_reference_from_distance_test()
     tweet(False)
     check_battery(False)
-    retry_loop("Test")
+    #retry_loop("Test")
     
 if __name__ == '__main__':
     random.seed(str(datetime.datetime.now()))
 
-    #test()
+    # test()
 
     # Schedule job
     schedule.every().day.at("11:00").do(tweet)
