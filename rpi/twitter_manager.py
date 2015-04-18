@@ -128,7 +128,8 @@ def tweet(notFake = True):
     else:
         phrase = get_random_phrase(distance)
 
-    # phrase = include_video(phrase)
+    phrase = include_video(phrase)
+    print "Phrase: %s" % phrase
 
     perform_update(phrase, notFake)
 
@@ -148,7 +149,7 @@ def weekly_tweet(notFake = True):
 
 def include_video(phrase, filename = 'video.yml'):
     # TODO: Remove video
-    video = get_video(filename)
+    video, should_remove_file = get_video(filename)
     if video is None:
         return phrase
     final_phrase = " ".join([phrase, video])
@@ -156,7 +157,7 @@ def include_video(phrase, filename = 'video.yml'):
         remove_file(filename)
         return phrase
     remove_file(filename)
-    return phrase_and_video
+    return final_phrase
 
 def get_video(filename = 'video.yml'):
     if not os.path.exists(filename):
@@ -191,7 +192,6 @@ def tweet_video(filename = 'video.yml', notFake = True):
         api = get_twitter_api()
         if notFake:
             api.PostDirectMessage("Video is %s" % video, screen_name="jlhonora")
-    if should_remove_file:
         remove_file(filename)
 
 def remove_file(filename):
@@ -252,7 +252,7 @@ if __name__ == '__main__':
 
     # Schedule job
     schedule.every().day.at("11:00").do(tweet)
-    schedule.every().day.at("11:00").do(tweet_video)
+    #schedule.every().day.at("11:00").do(tweet_video)
     #schedule.every().monday.at("10:50").do(weekly_tweet)
     #schedule.every().day.do(attempt_monthly_tweet)
     #schedule.every().day.at("22:00").do(check_battery)
