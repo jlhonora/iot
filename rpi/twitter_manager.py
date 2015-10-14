@@ -113,13 +113,13 @@ def get_twitter_api():
         return api
     return None
 
-def tweet(notFake = True):
-    laps = get_laps_for_date(datetime.datetime.utcnow())
+def tweet(notFake = True, base = datetime.datetime.utcnow()):
+    laps = get_laps_for_date(base)
     print "Laps: %.1f" % laps
     distance = laps2km(laps)
     print "Distance: %.1f km" % distance
     phrase = ""
-    if distance > 16.5:
+    if distance > 22.5:
         distance = 0.0
     if (distance < 0.05):
         phrase = get_no_activity_phrase(distance)
@@ -133,8 +133,7 @@ def tweet(notFake = True):
 
     perform_update(phrase, notFake)
 
-def weekly_tweet(notFake = True):
-    base = datetime.datetime.utcnow()
+def weekly_tweet(notFake = True, base = datetime.datetime.utcnow()):
     laps = get_laps_for_timerange(base - datetime.timedelta(days=7), base)
     print "Laps: %.1f" % laps
     distance = laps2km(laps)
@@ -241,7 +240,7 @@ def test():
     get_twitter_api()
     tweet_video(notFake=False)
     get_reference_from_distance_test()
-    tweet(False)
+    tweet(False, datetime.datetime.utcnow() - datetime.timedelta(days=0))
     check_battery(False)
     #retry_loop("Test")
     
