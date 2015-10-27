@@ -113,7 +113,9 @@ def get_twitter_api():
         return api
     return None
 
-def tweet(notFake = True, base = datetime.datetime.utcnow()):
+def tweet(notFake = True, base = datetime.datetime.utcnow(), allowPast = False):
+    if !allowPast:
+        base = datetime.datetime.utcnow()
     laps = get_laps_for_date(base)
     print "Laps: %.1f" % laps
     distance = laps2km(laps)
@@ -240,7 +242,7 @@ def test():
     get_twitter_api()
     tweet_video(notFake=False)
     get_reference_from_distance_test()
-    tweet(False, datetime.datetime.utcnow() - datetime.timedelta(days=0))
+    tweet(False, datetime.datetime.strptime('2015-10-27 11:00:00', '%Y-%m-%d %H:%M:%S'), True)
     check_battery(False)
     #retry_loop("Test")
     
