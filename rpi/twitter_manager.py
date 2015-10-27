@@ -249,10 +249,10 @@ def test():
 if __name__ == '__main__':
     random.seed(str(datetime.datetime.now()))
 
-    test()
+    # test()
 
     # Schedule job
-    # schedule.every().day.at("11:00").do(tweet)
+    schedule.every().day.at("11:00").do(tweet)
     #schedule.every().day.at("11:00").do(tweet_video)
     #schedule.every().monday.at("10:50").do(weekly_tweet)
     #schedule.every().day.do(attempt_monthly_tweet)
