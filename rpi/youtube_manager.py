@@ -29,7 +29,8 @@ MAX_RETRIES = 10
 RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, httplib.NotConnected,
   httplib.IncompleteRead, httplib.ImproperConnectionState,
   httplib.CannotSendRequest, httplib.CannotSendHeader,
-  httplib.ResponseNotReady, httplib.BadStatusLine)
+  httplib.ResponseNotReady, httplib.BadStatusLine,
+  httplib2.ServerNotFoundError)
 
 # Always retry when an apiclient.errors.HttpError with one of these status
 # codes is raised.
