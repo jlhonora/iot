@@ -126,6 +126,7 @@ if __name__ == '__main__':
         if camera is None:
             camera = camera_manager.CameraManager()
             camera.setup()
+            sleep(2)
             camera.light(True)
 
         # Check if we should be filming
